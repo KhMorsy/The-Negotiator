@@ -12,8 +12,9 @@
 
 - **LSP:** `chooseNextSkill` / `filterEligibleSkills` unchanged; generated skills loaded alongside seeded catalog.
 - **CI default:** fake `LLMPlanner` in tests; no OpenAI in CI.
-- Branch naming: `lane-a/PR-A8-skill-generator`.
-- **Depends on:** **PR-I2** (T2 gate merged).
+- **Lane:** **C (skills machine)** — branch naming: `lane-c/PR-A8-skill-generator`.
+- **Depends on:** **PR-C1** (skills pool + guidelines merged). Lane C exception: may start before the T2 gate because it only touches skills-lane files; the T3 gate (PR-I3) still validates it end-to-end.
+- Generated skills must comply with `docs/skills/SKILL_AUTHORING_GUIDE.md` (PR-C1); the validator enforces the same rules the guide states.
 
 **Master plan:** [2026-07-19-the-negotiator-master-plan.md](../2026-07-19-the-negotiator-master-plan.md)
 
@@ -395,4 +396,4 @@ git commit -m "feat(A8): SkillGenerator creates Skill from unseen ask via LLMPla
 - [ ] `generateSkillFromAsk` produces Zod-valid `Skill` with honest preconditions
 - [ ] Generated skills persist under `config/skills/generated/`
 - [ ] Skill engine domain unchanged; new skills merge into catalog at load time
-- [ ] `npm run ci` green on `lane-a/PR-A8-skill-generator`
+- [ ] `npm run ci` green on `lane-c/PR-A8-skill-generator`

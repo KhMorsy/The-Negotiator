@@ -8,7 +8,8 @@ Execute in dependency order. Full index and lane rules: [../2026-07-19-the-negot
 |---------|------|
 | [PR-01-contracts.md](PR-01-contracts.md) | Shared |
 | [PR-A1-db-repos.md](PR-A1-db-repos.md) | A |
-| [PR-A2-skill-engine.md](PR-A2-skill-engine.md) | A |
+| [PR-A2-skill-engine.md](PR-A2-skill-engine.md) | **C** (skills) |
+| [PR-C1-skills-pool.md](PR-C1-skills-pool.md) | **C** (skills) |
 | [PR-A3-quote-extractor.md](PR-A3-quote-extractor.md) | A |
 | [PR-A4-knowledge-base.md](PR-A4-knowledge-base.md) | A |
 | [PR-A5-webhooks.md](PR-A5-webhooks.md) | A |
@@ -33,7 +34,7 @@ Execute in dependency order. Full index and lane rules: [../2026-07-19-the-negot
 
 | Package | Lane |
 |---------|------|
-| [PR-A8-skill-generator.md](PR-A8-skill-generator.md) | A |
+| [PR-A8-skill-generator.md](PR-A8-skill-generator.md) | **C** (skills) — Lane C exception: may start after PR-C1, before the T2 gate |
 | [PR-B8-room-photos.md](PR-B8-room-photos.md) | B |
 | [PR-A9-email-fallback.md](PR-A9-email-fallback.md) | A |
 | [PR-I3-t3-integration.md](PR-I3-t3-integration.md) | Integration **GATE** |

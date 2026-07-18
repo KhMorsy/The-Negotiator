@@ -12,9 +12,11 @@
 
 **Layer docs:** [domain.md](../../../architecture/layers/domain.md) · [contracts.md](../../../architecture/layers/contracts.md)
 
-**Branch:** `lane-a/PR-A2-skill-engine`
+**Lane:** **C (skills machine)** — this package moved from Lane A to Lane C; Lane A consumes its exports only.
 
-**Depends on:** PR-01 (types + ports), PR-A1 (`AuditRepository` fake for tests)
+**Branch:** `lane-c/PR-A2-skill-engine`
+
+**Depends on:** PR-01 (types + ports). Tests need `createInMemoryAuditRepository` from `src/adapters/fake/inMemoryAuditRepository.ts` — normally delivered by PR-A1; if PR-A1 has not merged yet, create it in this PR (a `Map`-backed `append`/`listByCall` in-memory repo) and notify Lane A to re-use it.
 
 ---
 
@@ -708,6 +710,6 @@ git commit -m "feat(skills): add skillEngine with honesty gate and audit logging
 
 - [ ] Honesty gate negative test proves `leverage_competing_bid` blocked with zero quotes
 - [ ] 12 skills loaded from JSON; `requiresCompetingQuote: true` on leverage skill
-- [ ] `npm run ci` green on `lane-a/PR-A2-skill-engine`
+- [ ] `npm run ci` green on `lane-c/PR-A2-skill-engine`
 - [ ] No adapter imports in `src/domain/**`
 - [ ] Domain layer doc updated

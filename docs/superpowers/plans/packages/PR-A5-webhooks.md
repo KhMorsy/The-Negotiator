@@ -14,7 +14,7 @@
 
 **Branch:** `lane-a/PR-A5-webhooks`
 
-**Depends on:** PR-A1 (repos), PR-A2 (`chooseNextSkill`), PR-A3 (`extractQuote`), PR-A4 (`createInMemoryKb`)
+**Depends on:** PR-A1 (repos), PR-A2 (`chooseNextSkill` — delivered by **Lane C**; coordinate timing), PR-A3 (`extractQuote`), PR-A4 (`createInMemoryKb`)
 
 ---
 

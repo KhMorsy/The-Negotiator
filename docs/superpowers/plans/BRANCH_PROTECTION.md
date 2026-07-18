@@ -4,8 +4,8 @@ Apply manually in GitHub → Settings (required for two-account smooth CI).
 
 ## Collaborators
 
-1. Invite the second Codex account as **Write** collaborator on `KhMorsy/The-Negotiator`.
-2. Both push feature branches to the **same** repo (no forks).
+1. Invite the second and third machine accounts as **Write** collaborators on `KhMorsy/The-Negotiator`.
+2. All three push feature branches to the **same** repo (no forks).
 
 ## Branch protection (`main`)
 
@@ -27,6 +27,7 @@ Create label: `no-docs-needed` (used by docs freshness gate with justification i
 
 ## Branch naming
 
-- `lane-a/PR-A2-skill-engine`
+- `lane-a/PR-A3-quote-extractor`
 - `lane-b/PR-B4-report-pure`
+- `lane-c/PR-A2-skill-engine`
 - `integration/PR-I1-t1-gate`

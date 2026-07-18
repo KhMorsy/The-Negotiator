@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Execute **one work package (PR) at a time** from `docs/superpowers/plans/packages/`.
 
-**Goal:** Ship a working T1 end-to-end Negotiator (home cleaning) with simulated telephony, then optionally T2 (real voice/calls) and T3 (wow features), via small test-driven PRs from two Codex machines.
+**Goal:** Ship a working T1 end-to-end Negotiator (home cleaning) with simulated telephony, then optionally T2 (real voice/calls) and T3 (wow features), via small test-driven PRs from three machines (Lane A backend, Lane B frontend/app, Lane C skills).
 
 **Architecture:** Pragmatic hexagonal — domain depends on ports in `src/contracts`; adapters implement ports; application orchestrates; frontend talks only to `/api/*`. See [architecture spec](../../specs/2026-07-18-the-negotiator-architecture.md) and [layer docs](../../architecture/layers/).
 
@@ -16,8 +16,9 @@
 - CI: **no vendor secrets**; all CI tests use `src/adapters/fake/**`.
 - Dependencies: `src/domain` imports only `src/contracts`; adapters never import domain; app imports adapters only from `src/app/composition/**`.
 - Docs gate: changing `src/<layer>/**` requires updating `docs/architecture/layers/<layer>.md` (or `no-docs-needed` label).
-- Branch naming: `lane-a/<PR-ID>-slug`, `lane-b/<PR-ID>-slug`, `integration/<PR-ID>-slug`.
-- Two GitHub collaborator accounts push to **same** repo (`KhMorsy/The-Negotiator`); never force-push `main`.
+- Branch naming: `lane-a/<PR-ID>-slug`, `lane-b/<PR-ID>-slug`, `lane-c/<PR-ID>-slug`, `integration/<PR-ID>-slug`.
+- Three GitHub collaborator accounts push to **same** repo (`KhMorsy/The-Negotiator`); never force-push `main`.
+- Package IDs are stable and never renamed; the **Lane** column in the work package index is authoritative (e.g. PR-A2 is executed by Lane C).
 - Local clones: avoid `#` in filesystem path (breaks Vite/Next).
 - Clean code: YAGNI, SRP per file, no speculative abstractions, TDD (failing test first).
 - Tier rule: finish **T1 gate (PR-I1)** before starting T2; finish **T2 gate (PR-I2)** before T3.
@@ -28,11 +29,14 @@
 
 | Lane | Machine / account | Owns | Must not edit without coordination |
 |------|-------------------|------|-------------------------------------|
-| **A** | Machine 1 | `src/domain/skills`, `src/domain/quotes`, `src/domain/audit`, `src/adapters/**`, `src/app/webhooks/**`, DB migrations | `src/frontend/**`, report UI |
-| **B** | Machine 2 | `src/frontend/**`, `src/app/intake/**`, `src/app/report/**`, `src/domain/jobSpec`, `src/domain/report/**` | Real telephony adapters |
-| **Shared** | Either, serialize | `src/contracts/**`, `config/verticals/**`, CI workflows | — open as dedicated contract PRs |
+| **A** | Machine 1 | `src/domain/quotes`, `src/adapters/**`, `src/app/webhooks/**`, DB migrations | `src/frontend/**`, report UI, `src/domain/skills/**` |
+| **B** | Machine 2 | `src/frontend/**`, `src/app/intake/**`, `src/app/report/**`, `src/domain/jobSpec`, `src/domain/report/**` | Real telephony adapters, `src/domain/skills/**` |
+| **C** | Machine 3 (skills) | `src/domain/skills/**`, `src/domain/audit/**`, `src/app/skills/**`, `config/skills/**`, `docs/skills/**` | `src/adapters/**` (except `src/adapters/fake/` files it introduces), `src/frontend/**` |
+| **Shared** | Any, serialize | `src/contracts/**`, `config/verticals/**`, CI workflows | — open as dedicated contract PRs |
 
-Meet only at: **PR-01 (contracts)**, **PR-I1 / I2 / I3 (integration)**.
+Meet only at: **PR-01 (contracts)**, **PR-A5 (webhooks consume skill engine)**, **PR-I1 / I2 / I3 (integration)**.
+
+Lane C is the **skills lane**: it owns the skill pool + authoring guidelines (PR-C1), the skill engine + honesty gate (PR-A2), and the skill generator (PR-A8). Lane A consumes the engine through its exported functions only (`loadSkills`, `filterEligibleSkills`, `chooseNextSkill`) and never edits `src/domain/skills/**`.
 
 ---
 
@@ -44,7 +48,6 @@ flowchart TB
     PR01["PR-01 Contracts"]
     subgraph laneA [Lane A]
         A1["PR-A1 DB + repos"]
-        A2["PR-A2 Skill Engine"]
         A3["PR-A3 Quote Extractor"]
         A4["PR-A4 KB"]
         A5["PR-A5 Webhooks"]
@@ -56,10 +59,17 @@ flowchart TB
         B4["PR-B4 Report pure fns"]
         B5["PR-B5 Report Composer UI"]
     end
+    subgraph laneC [Lane C - Skills]
+        A2["PR-A2 Skill Engine + honesty gate"]
+        C1["PR-C1 Skills pool + guidelines"]
+        A8["PR-A8 Skill Generator"]
+    end
     PRI1["PR-I1 T1 GATE"]
     PR00 --> PR01
-    PR01 --> A1 --> A2 --> A3
+    PR01 --> A1 --> A3
     A1 --> A4
+    A1 -. "fake AuditRepository" .-> A2
+    PR01 --> A2 --> C1 --> A8
     A2 --> A5
     A3 --> A5
     PR01 --> B1 --> B2 --> B3
@@ -69,7 +79,9 @@ flowchart TB
     B5 --> PRI1
 ```
 
-T2/T3 packages are listed in [packages/](packages/) and must not start until their gate predecessor merges.
+T2/T3 packages are listed in [packages/](packages/) and must not start until their gate predecessor merges — **exception:** Lane C packages (PR-C1, PR-A8) touch only skills-lane files, so they may proceed and merge as soon as their own dependencies merge and CI is green, independent of tier gates. The T3 gate (PR-I3) still verifies the generator end-to-end.
+
+**Lane C soft dependency:** PR-A2 tests use `createInMemoryAuditRepository` from `src/adapters/fake/`. If PR-A1 has not merged yet, Lane C creates that fake itself inside PR-A2 (tell Lane A, so PR-A1 re-uses instead of duplicating it).
 
 ---
 
@@ -193,7 +205,8 @@ Port method names are locked in [contracts.md](../../architecture/layers/contrac
 | PR-00 | — | — | Bootstrap (this commit) | — |
 | PR-01 | T1 | Shared | [PR-01-contracts.md](packages/PR-01-contracts.md) | PR-00 |
 | PR-A1 | T1 | A | [PR-A1-db-repos.md](packages/PR-A1-db-repos.md) | PR-01 |
-| PR-A2 | T1 | A | [PR-A2-skill-engine.md](packages/PR-A2-skill-engine.md) | PR-A1 |
+| PR-A2 | T1 | **C** | [PR-A2-skill-engine.md](packages/PR-A2-skill-engine.md) | PR-01 (fake audit repo from PR-A1 or self-created) |
+| PR-C1 | T1 | **C** | [PR-C1-skills-pool.md](packages/PR-C1-skills-pool.md) | PR-A2 |
 | PR-A3 | T1 | A | [PR-A3-quote-extractor.md](packages/PR-A3-quote-extractor.md) | PR-A1 |
 | PR-A4 | T1 | A | [PR-A4-knowledge-base.md](packages/PR-A4-knowledge-base.md) | PR-A1 |
 | PR-A5 | T1 | A | [PR-A5-webhooks.md](packages/PR-A5-webhooks.md) | PR-A2, PR-A3 |
@@ -208,7 +221,7 @@ Port method names are locked in [contracts.md](../../architecture/layers/contrac
 | PR-B6 | T2 | B | [PR-B6-live-dashboard.md](packages/PR-B6-live-dashboard.md) | PR-I1 |
 | PR-B7 | T2 | B | [PR-B7-drilldowns.md](packages/PR-B7-drilldowns.md) | PR-I1 |
 | PR-I2 | T2 | Integration | [PR-I2-t2-integration.md](packages/PR-I2-t2-integration.md) | A7, B6, B7 |
-| PR-A8 | T3 | A | [PR-A8-skill-generator.md](packages/PR-A8-skill-generator.md) | PR-I2 |
+| PR-A8 | T3* | **C** | [PR-A8-skill-generator.md](packages/PR-A8-skill-generator.md) | PR-C1 (*Lane C exception: may start before PR-I2; T3 gate still validates it) |
 | PR-B8 | T3 | B | [PR-B8-room-photos.md](packages/PR-B8-room-photos.md) | PR-I2 |
 | PR-A9 | T3 | A | [PR-A9-email-fallback.md](packages/PR-A9-email-fallback.md) | PR-I2 |
 | PR-I3 | T3 | Integration | [PR-I3-t3-integration.md](packages/PR-I3-t3-integration.md) | A8, B8, A9 |
@@ -261,7 +274,7 @@ Playwright e2e:
 ## How to execute a package
 
 1. Pull `main`
-2. `git checkout -b lane-a/PR-A2-skill-engine` (or lane-b / integration)
+2. `git checkout -b lane-c/PR-A2-skill-engine` (or lane-a / lane-b / integration, per the package's Lane)
 3. Open the package file; follow steps top to bottom (TDD)
 4. Run `npm run ci` before opening PR
 5. Fill PR template; request review from the other lane if contracts touched
