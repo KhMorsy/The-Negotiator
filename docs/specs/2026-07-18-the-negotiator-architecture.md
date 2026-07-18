@@ -20,6 +20,8 @@
 
 **Architectural principle:** the system is **event-driven** so it fits serverless. The Call Orchestrator does not hold a long-running process; call progress advances through ElevenLabs/Twilio webhook events, and state lives in Supabase. This keeps everything on Vercel functions without a separate always-on worker.
 
+**Design style (pragmatic hexagonal):** the **domain** (the parts that win the challenge — skill selection, honesty gate, quote normalization, ranking) depends only on **ports** (narrow TypeScript interfaces). Concrete vendors (OpenAI, ElevenLabs, Twilio, Supabase, Google Places) are **adapters** behind those ports. We invert dependencies **only at the four volatile boundaries** — telephony, LLM, persistence, and document parsing — and keep everything else concrete, so we get SOLID where it pays off (testing, provider-swap, demo fakes) without over-engineering an 8-hour build. See §8 for the SOLID rationale and module-dependency diagram.
+
 ---
 
 ## 2. System architecture (container view)
@@ -110,14 +112,34 @@ flowchart TB
 
 ## 3. Components (what / how used / depends on)
 
-- **Intake Service** — starts the ElevenLabs voice interview; parses uploaded quote docs and room photos via OpenAI. Depends on: ElevenLabs, OpenAI, Job Spec Builder.
-- **Job Spec Builder** — normalizes voice + document outputs into one canonical **job spec JSON** (schema in §6). Depends on: Postgres.
-- **Call Orchestrator** — pulls the vendor call list (Google Places/Yelp), launches parallel round-1 calls, tracks state, triggers round-2 callbacks to the top 1–2 with leverage, handles retries. Event-driven via webhooks. Depends on: ElevenLabs, Supabase.
-- **Webhook Handlers** — receive ElevenLabs agent tool calls (mid-turn) and Twilio/ElevenLabs call lifecycle events. Route to Skill Engine and Quote Extractor.
-- **Negotiation Skill Engine** — the differentiator. `preconditions filter → KB retrieval (pgvector) → OpenAI planner picks the move`, returns the chosen skill to the agent and writes the audit trail. Depends on: pgvector, OpenAI, Audit Logger.
-- **Quote Extractor** — converts each call transcript into a structured, comparable quote (fees itemized). Depends on: OpenAI, Postgres.
-- **Report + Ranking Service** — normalizes quotes to a comparable total, computes savings delta, red-flags (vs benchmarks), and trust score; produces primary output A + drill-downs D/E/F. Depends on: Postgres, benchmarks KB.
-- **Honesty / Audit Logger** — records every skill fired, the evidence that authorized it, and each resulting price/term change. Server-side and authoritative.
+Components are grouped by layer. **Domain** components hold logic and depend only on **ports** (§8). **Application** components orchestrate. **Adapters** implement ports against concrete vendors. Responsibilities are split so each component has one reason to change (SRP).
+
+### Application / orchestration
+- **Intake Orchestrator** — runs the intake journey: starts the voice interview (via `SpeechAgent` port), hands uploads to the Document Parser, forwards results to the Job Spec Builder. *One job: sequence intake.* Depends on: `SpeechAgent`, Document Parser, Job Spec Builder.
+- **Call Orchestrator** — launches parallel round-1 calls, tracks state, triggers round-2 callbacks to the top 1–2 with leverage, handles retries. Event-driven via webhooks. *Call-list sourcing extracted to Vendor Discovery.* Depends on: `TelephonyProvider`, Vendor Discovery, `CallRepository`.
+- **Webhook Handlers** — receive ElevenLabs agent tool calls (mid-turn) and Twilio/ElevenLabs lifecycle events; translate them into domain calls (Skill Engine, Quote Extractor). *One job: adapt inbound events → domain.*
+
+### Domain (logic; depends only on ports)
+- **Job Spec Builder** — normalizes voice + document outputs into one canonical **job spec JSON** (schema in §6). Depends on: `JobSpecRepository`.
+- **Negotiation Skill Engine** — the differentiator. `preconditions filter → KB retrieval → planner picks the move`, returns the chosen skill and emits an audit event. Depends on: `KnowledgeBase`, `LLMPlanner`, Audit Logger. The **preconditions filter** is a pure function (deterministic honesty gate) — trivially unit-testable.
+- **Quote Extractor** — converts a call transcript into a structured quote (fees itemized). Depends on: `LLMParser`, `QuoteRepository`.
+- **Vendor Discovery** — produces the call list for a job/geo. Depends on: `VendorDirectory` port (Places/Yelp behind it).
+- **Report assembly (SRP split from the old "Report + Ranking Service"):**
+  - **Quote Normalizer** — maps heterogeneous pricing models (flat / hourly-with-minimum / per-sqft) to one comparable total. Pure function.
+  - **RedFlag Evaluator** — applies config red-flag rules (>30% below market, etc.) against benchmarks. Pure function over rules.
+  - **Trust Scorer** — blends insured/bonded, guarantee, review volume into a trust signal. Pure function.
+  - **Ranker** — orders quotes and selects the recommended deal. Pure function.
+  - **Report Composer** — assembles primary output A + optional drill-downs D/E/F from the four above. Depends on: `QuoteRepository`, `KnowledgeBase` (benchmarks).
+- **Honesty / Audit Logger** — records every skill fired, its authorizing evidence, and each price/term change. Depends on: `AuditRepository`.
+
+### Adapters (implement ports; the only code that knows a vendor's name)
+- `TelephonyProvider` → **TwilioElevenLabsAdapter** (real) / **SimulatedCallAdapter** (golden/demo)
+- `SpeechAgent` → **ElevenLabsAgentAdapter**
+- `LLMPlanner` / `LLMParser` → **OpenAIAdapter**
+- `DocumentParser` → **OpenAIVisionAdapter** (quote docs + room photos)
+- `KnowledgeBase` → **PgVectorAdapter**
+- `*Repository` (JobSpec/Call/Quote/Audit) → **SupabaseAdapter**
+- `VendorDirectory` → **PlacesYelpAdapter**
 
 ---
 
@@ -264,7 +286,91 @@ The **market-research knowledge base** (benchmarks, fee patterns, red-flag thres
 
 ---
 
-## 8. Mapping to build tiers (from feature spec §8)
+## 8. SOLID rationale, ports & module dependencies
+
+### Ports (the abstraction seam)
+Domain code imports these interfaces; adapters implement them. Swapping a provider (or faking it for a test/demo) means writing a new adapter, never editing the domain.
+
+| Port | Purpose | Adapter(s) |
+|------|---------|-----------|
+| `TelephonyProvider` | place/manage outbound calls | TwilioElevenLabs · **SimulatedCall** (demo/golden) |
+| `SpeechAgent` | run the voice conversation (intake + calls) | ElevenLabsAgent |
+| `LLMPlanner` | choose a skill given eligible set + context | OpenAI |
+| `LLMParser` | transcript/doc → structured data | OpenAI (+ Vision) |
+| `DocumentParser` | quote docs / room photos → job-spec fields | OpenAIVision |
+| `KnowledgeBase` | retrieve benchmarks + skill signals | PgVector |
+| `VendorDirectory` | vendor call list for a job/geo | Places/Yelp |
+| `JobSpecRepository` / `CallRepository` / `QuoteRepository` / `AuditRepository` | persistence | Supabase |
+
+### How each principle is satisfied
+
+- **SRP** — the old bundled services are split: Intake → *Intake Orchestrator* + *Document Parser*; Report → *Normalizer* + *RedFlag Evaluator* + *Trust Scorer* + *Ranker* + *Composer*; call-list sourcing → *Vendor Discovery*. Each has one reason to change.
+- **OCP** — behavior grows via **data**, not code: skills are rows, verticals are config, red-flag rules are config. New skill / vertical / rule = no code change. New provider = new adapter, domain untouched.
+- **LSP** — every adapter honors its port's contract, so `SimulatedCallAdapter` substitutes for `TwilioElevenLabsAdapter` with no domain changes — this is exactly what powers the golden-call demo backbone.
+- **ISP** — ports are narrow and role-specific (`LLMPlanner` vs `LLMParser` are separate even though both hit OpenAI), so no consumer depends on methods it doesn't use.
+- **DIP** — domain depends on ports (abstractions); adapters (details) depend on the ports too. Dependencies point **inward** toward the domain.
+
+### Module-dependency diagram (dependencies point inward)
+
+```mermaid
+flowchart TB
+    subgraph adapters [Adapters - depend on ports]
+        twilioAd["TwilioElevenLabsAdapter"]
+        simAd["SimulatedCallAdapter"]
+        elevenAd["ElevenLabsAgentAdapter"]
+        openaiAd["OpenAIAdapter (Planner/Parser/Vision)"]
+        pgvecAd["PgVectorAdapter"]
+        supaAd["SupabaseAdapter (repositories)"]
+        placesAd["PlacesYelpAdapter"]
+    end
+
+    subgraph ports [Ports - interfaces owned by the domain]
+        pTel["TelephonyProvider"]
+        pSpeech["SpeechAgent"]
+        pPlan["LLMPlanner / LLMParser"]
+        pDoc["DocumentParser"]
+        pKB["KnowledgeBase"]
+        pDir["VendorDirectory"]
+        pRepo["*Repository"]
+    end
+
+    subgraph domain [Domain - pure logic, no vendor imports]
+        skill["Skill Engine (+ honesty gate)"]
+        norm["Quote Normalizer"]
+        rf["RedFlag Evaluator"]
+        trust["Trust Scorer"]
+        rank["Ranker"]
+        spec["Job Spec Builder"]
+        audit["Audit Logger"]
+    end
+
+    subgraph app [Application - orchestration]
+        intakeOrc["Intake Orchestrator"]
+        callOrc["Call Orchestrator"]
+        wh["Webhook Handlers"]
+        composer["Report Composer"]
+    end
+
+    app --> domain
+    domain --> ports
+    adapters --> ports
+
+    twilioAd -.implements.-> pTel
+    simAd -.implements.-> pTel
+    elevenAd -.implements.-> pSpeech
+    openaiAd -.implements.-> pPlan
+    openaiAd -.implements.-> pDoc
+    pgvecAd -.implements.-> pKB
+    supaAd -.implements.-> pRepo
+    placesAd -.implements.-> pDir
+```
+
+### Deliberately NOT abstracted (avoid over-engineering)
+Realtime UI updates, Next.js routing, config-file loading, and the webhook transport are used concretely — they are not volatile and faking them buys nothing for an 8-hour build. SOLID is applied where it earns its keep.
+
+---
+
+## 9. Mapping to build tiers (from feature spec §8)
 
 | Tier | Architecture surface to stand up |
 |------|----------------------------------|
@@ -274,8 +380,8 @@ The **market-research knowledge base** (benchmarks, fee patterns, red-flag thres
 
 ---
 
-## 9. Owner mapping (suggested)
+## 10. Owner mapping (suggested)
 
-- **Khaled (backend/data):** Supabase schema, Skill Engine, Quote Extractor, webhooks, KB ingestion.
-- **Abdu (frontend + logic):** Intake/confirmation/report UI, skill selection logic, report ranking rules.
-- **Tarek (fullstack + demo):** ElevenLabs/Twilio wiring, Call Orchestrator, deployment, golden-call capture, demo/materials.
+- **Khaled (backend/data):** ports + Supabase/PgVector adapters, Skill Engine (+ honesty gate), Quote Extractor, webhooks, KB ingestion.
+- **Abdu (frontend + logic):** Intake/confirmation/report UI; the pure-function domain logic (Normalizer, RedFlag Evaluator, Trust Scorer, Ranker) and skill selection rules.
+- **Tarek (fullstack + demo):** ElevenLabs/Twilio + Simulated adapters, Intake/Call Orchestrators, deployment, golden-call capture, demo/materials.

@@ -1,6 +1,7 @@
-%% The Negotiator - System Architecture (Container view)
+%% The Negotiator - System Architecture (Runtime container view)
 %% Stack: Next.js (TypeScript) on Vercel + Supabase (Postgres/pgvector/Storage)
 %% Voice: ElevenLabs Agents + native Twilio integration | AI: OpenAI (planner/parsing/vision)
+%% Design: pragmatic hexagonal - domain depends on ports; vendors are adapters (see module-dependency diagram below)
 
 flowchart TB
     customer["Customer<br/>(browser)"]
@@ -13,24 +14,33 @@ flowchart TB
         reportUI["Report Dashboard<br/>A default + D/E/F drill-downs"]
     end
 
-    subgraph backend [Backend - Next.js API Routes / Node]
-        intakeSvc["Intake Service<br/>voice session init + doc/photo parse"]
-        specBuilder["Job Spec Builder<br/>normalizes to one JSON spec"]
+    subgraph app [Application - orchestration]
+        intakeOrc["Intake Orchestrator"]
+        docParser["Document Parser"]
         orchestrator["Call Orchestrator<br/>parallel calls, two-round, retries"]
+        vendorDisc["Vendor Discovery"]
         webhooks["ElevenLabs + Twilio<br/>Webhook Handlers"]
-        skillEngine["Negotiation Skill Engine<br/>preconditions filter + planner + KB retrieval"]
-        quoteExtractor["Quote Extractor<br/>transcript to structured quote"]
-        reportSvc["Report + Ranking Service<br/>normalize, red-flags, trust score"]
+        composer["Report Composer<br/>assembles A + D/E/F"]
+    end
+
+    subgraph domain [Domain - pure logic, depends only on ports]
+        specBuilder["Job Spec Builder"]
+        skillEngine["Negotiation Skill Engine<br/>preconditions gate + planner"]
+        quoteExtractor["Quote Extractor"]
+        normalizer["Quote Normalizer"]
+        redflag["RedFlag Evaluator"]
+        trust["Trust Scorer"]
+        ranker["Ranker"]
         auditLog["Honesty / Audit Logger"]
     end
 
-    subgraph voice [Voice + Telephony]
-        elevenAgent["ElevenLabs Agent<br/>conversation LLM + STT/TTS"]
-        twilio["Twilio (native integration)<br/>PSTN outbound"]
-    end
-
-    subgraph ai [AI Services]
-        openai["OpenAI<br/>planner, quote/doc parsing, photo vision"]
+    subgraph adapters [Adapters - implement ports]
+        elevenAd["ElevenLabsAgent (SpeechAgent)"]
+        telAd["Telephony: Twilio / Simulated"]
+        openaiAd["OpenAI (LLMPlanner/Parser/Vision)"]
+        pgvecAd["PgVector (KnowledgeBase)"]
+        supaAd["Supabase (repositories)"]
+        placesAd["Places/Yelp (VendorDirectory)"]
     end
 
     subgraph data [Supabase]
@@ -40,44 +50,65 @@ flowchart TB
     end
 
     subgraph external [External Data]
-        places["Google Places / Yelp<br/>vendor call list"]
+        places["Google Places / Yelp"]
         benchmarks["Cleaning price benchmarks<br/>(Thumbtack/Angi/HomeAdvisor)"]
     end
 
+    %% Intake
     customer --> intakeUI
-    intakeUI --> intakeSvc
-    intakeSvc --> elevenAgent
-    intakeSvc --> openai
-    intakeSvc --> specBuilder
+    intakeUI --> intakeOrc
+    intakeOrc --> elevenAd
+    intakeOrc --> docParser
+    docParser --> openaiAd
+    intakeOrc --> specBuilder
     specBuilder --> confirmUI
     confirmUI -->|"user confirms spec"| orchestrator
 
-    orchestrator --> places
-    orchestrator --> elevenAgent
-    elevenAgent --> twilio
-    twilio --> vendors
+    %% Calls
+    orchestrator --> vendorDisc
+    vendorDisc --> placesAd
+    placesAd --> places
+    orchestrator --> telAd
+    telAd --> elevenAd
+    elevenAd --> vendors
 
-    elevenAgent -->|"agent tool calls mid-turn"| webhooks
+    %% Mid-call skill loop
+    elevenAd -->|"agent tool call mid-turn"| webhooks
     webhooks --> skillEngine
-    skillEngine --> vec
-    skillEngine --> openai
+    skillEngine --> pgvecAd
+    skillEngine --> openaiAd
     skillEngine --> auditLog
-    skillEngine -->|"chosen move"| elevenAgent
+    skillEngine -->|"chosen move"| elevenAd
 
+    %% Quote capture
     webhooks -->|"call events + transcript"| quoteExtractor
-    quoteExtractor --> openai
-    quoteExtractor --> pg
-    twilio -->|"recording"| store
+    quoteExtractor --> openaiAd
+    quoteExtractor --> supaAd
+    telAd -->|"recording"| store
 
-    orchestrator -->|"round 2: call back top 1-2 with leverage"| elevenAgent
-    orchestrator --> reportSvc
-    reportSvc --> pg
-    reportSvc --> benchmarks
-    reportSvc --> reportUI
+    %% Round 2 + report
+    orchestrator -->|"round 2: top 1-2 with leverage"| telAd
+    orchestrator --> composer
+    composer --> normalizer
+    composer --> redflag
+    composer --> trust
+    composer --> ranker
+    redflag --> benchmarks
+    composer --> supaAd
+    composer --> reportUI
 
-    orchestrator --> liveUI
-    auditLog --> pg
+    %% Adapters to infra
+    pgvecAd --> vec
+    supaAd --> pg
     benchmarks --> vec
 
+    %% Realtime + outcome
+    orchestrator --> liveUI
+    auditLog --> supaAd
     pg --> liveUI
     reportUI -->|"one-tap next action (no auto-send)"| customer
+
+%% ---------------------------------------------------------------------------
+%% Module-dependency view (SOLID): dependencies point INWARD toward the domain.
+%% Adapters and Application depend on Ports; Ports are owned by the Domain.
+%% ---------------------------------------------------------------------------
