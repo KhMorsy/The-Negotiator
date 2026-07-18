@@ -1,0 +1,20 @@
+{
+  "id": "home_cleaning",
+  "displayName": "Home Cleaning",
+  "jobTypes": [
+    "recurring_weekly",
+    "recurring_biweekly",
+    "recurring_monthly",
+    "deep_clean",
+    "move_out",
+    "post_renovation",
+    "turnover"
+  ],
+  "redFlagRules": {
+    "belowMarketPercent": 30,
+    "requireInsuredBondedWarning": true,
+    "openEndedHourlyIsWarning": true
+  },
+  "benchmarkSources": ["thumbtack", "angi", "homeadvisor"],
+  "skillsSeedNote": "Seeded skill rows land in PR-A2"
+}
