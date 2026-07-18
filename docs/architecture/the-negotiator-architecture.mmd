@@ -1,0 +1,83 @@
+%% The Negotiator - System Architecture (Container view)
+%% Stack: Next.js (TypeScript) on Vercel + Supabase (Postgres/pgvector/Storage)
+%% Voice: ElevenLabs Agents + native Twilio integration | AI: OpenAI (planner/parsing/vision)
+
+flowchart TB
+    customer["Customer<br/>(browser)"]
+    vendors["Cleaning Businesses<br/>(PSTN phone)"]
+
+    subgraph frontend [Frontend - Next.js on Vercel]
+        intakeUI["Intake UI<br/>voice + document/photo upload"]
+        confirmUI["Job Spec Confirmation UI"]
+        liveUI["Live Call Status Dashboard<br/>(Supabase Realtime)"]
+        reportUI["Report Dashboard<br/>A default + D/E/F drill-downs"]
+    end
+
+    subgraph backend [Backend - Next.js API Routes / Node]
+        intakeSvc["Intake Service<br/>voice session init + doc/photo parse"]
+        specBuilder["Job Spec Builder<br/>normalizes to one JSON spec"]
+        orchestrator["Call Orchestrator<br/>parallel calls, two-round, retries"]
+        webhooks["ElevenLabs + Twilio<br/>Webhook Handlers"]
+        skillEngine["Negotiation Skill Engine<br/>preconditions filter + planner + KB retrieval"]
+        quoteExtractor["Quote Extractor<br/>transcript to structured quote"]
+        reportSvc["Report + Ranking Service<br/>normalize, red-flags, trust score"]
+        auditLog["Honesty / Audit Logger"]
+    end
+
+    subgraph voice [Voice + Telephony]
+        elevenAgent["ElevenLabs Agent<br/>conversation LLM + STT/TTS"]
+        twilio["Twilio (native integration)<br/>PSTN outbound"]
+    end
+
+    subgraph ai [AI Services]
+        openai["OpenAI<br/>planner, quote/doc parsing, photo vision"]
+    end
+
+    subgraph data [Supabase]
+        pg[("Postgres<br/>job_specs, vendors, calls,<br/>quotes, transcripts, skills, audit_log")]
+        vec[("pgvector<br/>market KB + skill signals")]
+        store[("Storage<br/>recordings, docs, photos")]
+    end
+
+    subgraph external [External Data]
+        places["Google Places / Yelp<br/>vendor call list"]
+        benchmarks["Cleaning price benchmarks<br/>(Thumbtack/Angi/HomeAdvisor)"]
+    end
+
+    customer --> intakeUI
+    intakeUI --> intakeSvc
+    intakeSvc --> elevenAgent
+    intakeSvc --> openai
+    intakeSvc --> specBuilder
+    specBuilder --> confirmUI
+    confirmUI -->|"user confirms spec"| orchestrator
+
+    orchestrator --> places
+    orchestrator --> elevenAgent
+    elevenAgent --> twilio
+    twilio --> vendors
+
+    elevenAgent -->|"agent tool calls mid-turn"| webhooks
+    webhooks --> skillEngine
+    skillEngine --> vec
+    skillEngine --> openai
+    skillEngine --> auditLog
+    skillEngine -->|"chosen move"| elevenAgent
+
+    webhooks -->|"call events + transcript"| quoteExtractor
+    quoteExtractor --> openai
+    quoteExtractor --> pg
+    twilio -->|"recording"| store
+
+    orchestrator -->|"round 2: call back top 1-2 with leverage"| elevenAgent
+    orchestrator --> reportSvc
+    reportSvc --> pg
+    reportSvc --> benchmarks
+    reportSvc --> reportUI
+
+    orchestrator --> liveUI
+    auditLog --> pg
+    benchmarks --> vec
+
+    pg --> liveUI
+    reportUI -->|"one-tap next action (no auto-send)"| customer
