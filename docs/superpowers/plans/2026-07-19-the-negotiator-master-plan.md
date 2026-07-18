@@ -6,7 +6,7 @@
 
 **Architecture:** Pragmatic hexagonal — domain depends on ports in `src/contracts`; adapters implement ports; application orchestrates; frontend talks only to `/api/*`. See [architecture spec](../../specs/2026-07-18-the-negotiator-architecture.md) and [layer docs](../../architecture/layers/).
 
-**Tech Stack:** Next.js 15 (TypeScript) · Vitest · Playwright · dependency-cruiser · Zod · Supabase · ElevenLabs · Twilio · OpenAI
+**Tech Stack:** Next.js 15 (TypeScript) · Vitest · Playwright · dependency-cruiser · Zod · Supabase · ElevenLabs · Twilio · OpenAI · Tavily (market research)
 
 ## Global Constraints
 
@@ -218,6 +218,7 @@ Port method names are locked in [contracts.md](../../architecture/layers/contrac
 | PR-I1 | T1 | Integration | [PR-I1-t1-integration.md](packages/PR-I1-t1-integration.md) | A5, B3, B5 |
 | PR-A6 | T2 | A | [PR-A6-elevenlabs-speech.md](packages/PR-A6-elevenlabs-speech.md) | PR-I1 |
 | PR-A7 | T2 | A | [PR-A7-twilio-orchestrator.md](packages/PR-A7-twilio-orchestrator.md) | PR-I1 |
+| PR-A10 | T2* | A | [PR-A10-tavily-research.md](packages/PR-A10-tavily-research.md) | PR-A4 (*offline benchmark-refresh task may run during T1; live adapter waits for PR-I1) |
 | PR-B6 | T2 | B | [PR-B6-live-dashboard.md](packages/PR-B6-live-dashboard.md) | PR-I1 |
 | PR-B7 | T2 | B | [PR-B7-drilldowns.md](packages/PR-B7-drilldowns.md) | PR-I1 |
 | PR-I2 | T2 | Integration | [PR-I2-t2-integration.md](packages/PR-I2-t2-integration.md) | A7, B6, B7 |

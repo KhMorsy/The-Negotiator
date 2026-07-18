@@ -25,6 +25,7 @@ Execute in dependency order. Full index and lane rules: [../2026-07-19-the-negot
 | Package | Lane |
 |---------|------|
 | [PR-A6-elevenlabs-speech.md](PR-A6-elevenlabs-speech.md) | A |
+| [PR-A10-tavily-research.md](PR-A10-tavily-research.md) | A — offline benchmark refresh may run during T1; live adapter after the T1 gate |
 | [PR-A7-twilio-orchestrator.md](PR-A7-twilio-orchestrator.md) | A |
 | [PR-B6-live-dashboard.md](PR-B6-live-dashboard.md) | B |
 | [PR-B7-drilldowns.md](PR-B7-drilldowns.md) | B |
