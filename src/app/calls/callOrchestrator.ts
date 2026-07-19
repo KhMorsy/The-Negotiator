@@ -44,7 +44,7 @@ export class CallOrchestrator {
       quoteRepo?: QuoteRepository;
       auditRepo?: AuditRepository;
       callRepo?: CallRepository;
-      telephony?: SimulationTelephony;
+      telephony?: TelephonyProvider;
       vendorDirectory?: VendorDirectory;
     },
   ) {}
@@ -75,7 +75,7 @@ export class CallOrchestrator {
         vendorId: vendor.id,
         round: 1,
       });
-      const extracted = await telephony.simulateQuoteExtracted(simulatedCall.callId, {
+      const extracted = await (telephony as SimulationTelephony).simulateQuoteExtracted(simulatedCall.callId, {
         basePrice: 200,
         normalizedTotal: 200,
         pricingModel: "flat",
@@ -129,7 +129,9 @@ export class CallOrchestrator {
     for (const vendorId of vendorIds.slice(0, 2)) {
       const call = await callRepo.create({ jobSpecId, vendorId, round: 2 });
       const simulatedCall = await telephony.startCall({ jobSpecId, vendorId, round: 2 });
-      const outcome = await telephony.simulateNegotiationOutcome(simulatedCall.callId);
+      const outcome = await (telephony as SimulationTelephony).simulateNegotiationOutcome(
+        simulatedCall.callId,
+      );
       const auditEvent = await auditRepo.append({
         callId: call.id,
         skillId: outcome.skillId,
