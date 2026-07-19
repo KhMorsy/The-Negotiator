@@ -20,6 +20,7 @@ export function IntakeScreen({
   const [busy, setBusy] = useState(false);
   const [voiceSynced, setVoiceSynced] = useState(false);
   const [uploadedAmount, setUploadedAmount] = useState<number | null>(null);
+  const [photosMerged, setPhotosMerged] = useState(false);
 
   useEffect(() => {
     if (initialJobSpec || !jobId) return;
@@ -63,6 +64,23 @@ export function IntakeScreen({
     setBusy(false);
   }
 
+  async function handlePhotoUpload(files: FileList) {
+    setBusy(true);
+    const form = new FormData();
+    form.set("jobSpecId", id);
+    Array.from(files).forEach((file) => form.append("photos", file));
+    const response = await fetch("/api/intake/upload-photos", {
+      method: "POST",
+      body: form,
+    });
+    if (response.ok) {
+      const { jobSpec: updated } = (await response.json()) as { jobSpec: JobSpec };
+      setJobSpec(updated);
+      setPhotosMerged(true);
+    }
+    setBusy(false);
+  }
+
   if (notFound) {
     return (
       <section className="space-y-4" data-testid="intake-screen">
@@ -87,7 +105,7 @@ export function IntakeScreen({
         className="space-y-3 rounded-lg border border-dashed border-gray-300 p-8 text-center"
       >
         <p className="text-gray-600">
-          Voice interview (simulated in T1 — real ElevenLabs agent arrives in T2)
+          Voice interview (ElevenLabs when live keys are set; simulated otherwise)
         </p>
         <button
           type="button"
@@ -123,6 +141,30 @@ export function IntakeScreen({
         {uploadedAmount !== null && (
           <p className="mt-2 text-sm text-green-700">
             Leverage quote captured: ${uploadedAmount}
+          </p>
+        )}
+      </div>
+      <div>
+        <label className="block text-sm font-medium">
+          Upload room photos — optional vision estimate
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          data-testid="intake-room-photos"
+          className="mt-2"
+          disabled={busy}
+          onChange={(event) => {
+            const files = event.target.files;
+            if (files && files.length > 0) void handlePhotoUpload(files);
+          }}
+        />
+        {photosMerged && jobSpec && (
+          <p className="mt-2 text-sm text-green-700" data-testid="intake-photos-result">
+            From photos: {jobSpec.sqft} sqft · {jobSpec.bedrooms} bed /{" "}
+            {jobSpec.bathrooms} bath
+            {jobSpec.conditionNotes ? ` — ${jobSpec.conditionNotes}` : ""}
           </p>
         )}
       </div>

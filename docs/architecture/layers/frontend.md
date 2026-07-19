@@ -21,7 +21,7 @@ Customer UI: intake (voice widget + uploads), job-spec confirmation, live call s
 | Screen | Route | Notes |
 |--------|-------|-------|
 | Home / start | `/` | Hero: busy dual-income family story hook |
-| Intake | `/intake/[jobId]` | Voice + document upload |
+| Intake | `/intake/[jobId]` | Voice + quote upload + room photo upload |
 | Confirm job spec | `/confirm/[jobId]` | Must confirm before calls |
 | Live calls | `/calls/[jobId]` | Call rows via Supabase Realtime or polling fallback |
 | Report | `/report/[jobId]` | A default; D/E/F expandable |

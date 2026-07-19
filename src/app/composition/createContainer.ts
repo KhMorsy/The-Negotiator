@@ -1,4 +1,5 @@
 import { createFakeDocumentParser } from "@/adapters/fake/fakeDocumentParser";
+import { createOpenAiVisionAdapter } from "@/adapters/llm/openAiVisionAdapter";
 import { createFakeSpeechAgent } from "@/adapters/fake/fakeSpeechAgent";
 import { createFakeVendorDirectory } from "@/adapters/fake/fakeVendorDirectory";
 import { createInMemoryKb } from "@/adapters/fake/inMemoryKb";
@@ -17,6 +18,7 @@ import { DocumentParserService } from "@/app/intake/documentParserService";
 import { IntakeOrchestrator } from "@/app/intake/intakeOrchestrator";
 import { ReportComposer } from "@/app/report/reportComposer";
 import type {
+  DocumentParser,
   KnowledgeBase,
   SpeechAgent,
   TelephonyProvider,
@@ -54,7 +56,7 @@ function buildContainer(): Container {
   const intakeOrchestrator = new IntakeOrchestrator({
     speechAgent: speech.agent,
     jobSpecRepo: app.repos.jobSpecs,
-    documentParserService: new DocumentParserService(createFakeDocumentParser()),
+    documentParserService: new DocumentParserService(selectDocumentParser()),
   });
   const callOrchestrator = new CallOrchestrator({
     jobSpecRepo: app.repos.jobSpecs,
@@ -93,6 +95,15 @@ function buildContainer(): Container {
     kbProviderKind: kb.kind,
     listAuditByJobSpec: getAuditEvents,
   };
+}
+
+
+function selectDocumentParser(): DocumentParser {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (process.env.USE_FAKE_DOCUMENT_PARSER === "false" && apiKey) {
+    return createOpenAiVisionAdapter({ apiKey });
+  }
+  return createFakeDocumentParser();
 }
 
 function selectKnowledgeBase(): {

@@ -11,4 +11,10 @@ export class DocumentParserService {
       leverageQuoteAmount: leverageQuote?.amount,
     };
   }
+
+  async parseRoomPhotos(
+    images: Array<{ bytes: Uint8Array; mimeType: string }>,
+  ): Promise<Partial<JobSpec>> {
+    return this.documentParser.parseRoomPhotos({ images });
+  }
 }

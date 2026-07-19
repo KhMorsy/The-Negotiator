@@ -85,3 +85,6 @@ drill-downs through one composition root.
 - [ ] Composition root is the sole adapter wiring point
 - [ ] Integration tests green with fakes
 - [ ] This doc updated when use cases change
+
+
+PR-B8 adds `IntakeOrchestrator.mergeRoomPhotos` and `POST /api/intake/upload-photos` to merge vision-estimated JobSpec fields into the draft.

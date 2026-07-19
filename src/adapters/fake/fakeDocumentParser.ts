@@ -13,7 +13,14 @@ export function createFakeDocumentParser(): DocumentParser {
       };
     },
     async parseRoomPhotos() {
-      return { sqft: 1600, bedrooms: 2, bathrooms: 2 };
+      return {
+        sqft: 1850,
+        bedrooms: 3,
+        bathrooms: 2,
+        conditionNotes:
+          "Living room shows normal wear; kitchen counters need extra attention.",
+        addOns: ["inside_fridge"],
+      };
     },
   };
 }
