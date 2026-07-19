@@ -23,6 +23,9 @@ Pure business logic that wins the challenge: honesty gate, skill filtering, quot
 | Skill preconditions (honesty gate) | `src/domain/skills/filterEligibleSkills.ts` | Pure function |
 | Skill engine | `src/domain/skills/skillEngine.ts` | Uses `LLMPlanner` + `KnowledgeBase` + `AuditRepository` ports |
 | Seeded skills loader | `src/domain/skills/loadSkills.ts` | Reads JSON skill definitions from config |
+| Skill catalog types | `src/domain/skills/catalogTypes.ts` | Catalog category extension of `Skill` |
+| Skill catalog validator | `src/domain/skills/validateCatalog.ts` | Pure authoring-rule validation |
+| Merged skill catalog loader | `src/domain/skills/loadSkillCatalog.ts` | Merges and validates seed and category data |
 | Quote extractor | `src/domain/quotes/extractQuote.ts` | Uses `LLMParser` + `QuoteRepository` ports |
 | Job Spec Builder | `src/domain/jobSpec/buildJobSpec.ts` | Pure merge + validate |
 | Quote Normalizer | `src/domain/report/normalizeQuote.ts` | Pure |
