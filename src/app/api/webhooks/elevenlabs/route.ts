@@ -38,14 +38,20 @@ export async function POST(request: Request) {
   }
 
   if (body.type === "transcript_complete") {
-    const quote = await handleTranscriptEvent(container, {
+    const result = await handleTranscriptEvent(container, {
       callId: body.callId,
       jobSpec: body.jobSpec,
       vendorId: body.vendorId,
       round: body.round,
       transcript: body.transcript,
     });
-    return NextResponse.json({ quote });
+    if (result.kind === "fallback") {
+      return NextResponse.json({
+        outcome: result.outcome,
+        messageId: result.messageId,
+      });
+    }
+    return NextResponse.json({ quote: result.quote });
   }
 
   return NextResponse.json({ error: "unsupported event type" }, { status: 400 });

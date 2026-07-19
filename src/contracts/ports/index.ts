@@ -11,3 +11,4 @@ export type {
   JobSpecRepository,
   QuoteRepository,
 } from "./repositories";
+export type { EmailNotifier } from "./email-notifier";

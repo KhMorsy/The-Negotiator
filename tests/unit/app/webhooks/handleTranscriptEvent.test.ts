@@ -23,7 +23,7 @@ describe("handleTranscriptEvent", () => {
   it("extracts and persists quote from transcript", async () => {
     const container = createTestContainer();
 
-    const quote = await handleTranscriptEvent(container, {
+    const result = await handleTranscriptEvent(container, {
       callId: "call-1",
       jobSpec,
       vendorId: "vendor-1",
@@ -37,6 +37,9 @@ describe("handleTranscriptEvent", () => {
         ],
       },
     });
+    expect(result.kind).toBe("quote");
+    if (result.kind !== "quote") throw new Error("expected quote");
+    const quote = result.quote;
 
     expect(quote.normalizedTotal).toBe(235);
     const listed = await container.repos.quotes.listByJobSpec(jobSpec.id);
