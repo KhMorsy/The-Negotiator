@@ -1,0 +1,11 @@
+[
+ {"id":"clarify_flat_rate_scope","name":"Clarify flat rate scope","category":"clarification","selectionSignals":["flat rate","fixed price"],"preconditions":{},"moveTemplate":"What exactly is included in the flat rate?"},
+ {"id":"clarify_hourly_minimum","name":"Clarify hourly minimum","category":"clarification","selectionSignals":["hourly rate","minimum hours"],"preconditions":{},"moveTemplate":"What is the hourly minimum for this job?"},
+ {"id":"clarify_addon_pricing","name":"Clarify addon pricing","category":"clarification","selectionSignals":["add on cost","extra service"],"preconditions":{},"moveTemplate":"What is the price of each requested add-on?"},
+ {"id":"clarify_deep_clean_scope","name":"Clarify deep clean scope","category":"clarification","selectionSignals":["deep clean","initial clean"],"preconditions":{},"moveTemplate":"What work does the deep clean include?"},
+ {"id":"clarify_move_out_scope","name":"Clarify move out scope","category":"clarification","selectionSignals":["move out","end of lease"],"preconditions":{},"moveTemplate":"What move-out tasks are included in this quote?"},
+ {"id":"request_itemized_quote","name":"Request itemized quote","category":"clarification","selectionSignals":["itemized quote","price breakdown"],"preconditions":{},"moveTemplate":"Can you provide an itemized all-in quote?"},
+ {"id":"request_fee_breakdown","name":"Request fee breakdown","category":"clarification","selectionSignals":["fee breakdown","extra charges"],"preconditions":{},"moveTemplate":"Can you list every fee in the total?"},
+ {"id":"clarify_supply_inclusion","name":"Clarify supply inclusion","category":"clarification","selectionSignals":["bring supplies","supplies included"],"preconditions":{},"moveTemplate":"Are cleaning supplies included in this price?"},
+ {"id":"clarify_arrival_window","name":"Clarify arrival window","category":"clarification","selectionSignals":["arrival window","time slot"],"preconditions":{},"moveTemplate":"What arrival window does this price include?"}
+]

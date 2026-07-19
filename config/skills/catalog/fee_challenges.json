@@ -1,0 +1,11 @@
+[
+ {"id":"challenge_dispatch_fee","name":"Challenge dispatch fee","category":"fee_challenges","selectionSignals":["dispatch fee","service call"],"preconditions":{},"moveTemplate":"Can you reduce the {{feeType}} of ${{feeAmount}}?"},
+ {"id":"challenge_travel_charge","name":"Challenge travel charge","category":"fee_challenges","selectionSignals":["travel charge","mileage fee"],"preconditions":{},"moveTemplate":"Can you waive the travel charge for this job?"},
+ {"id":"challenge_supply_markup","name":"Challenge supply markup","category":"fee_challenges","selectionSignals":["supply markup","product cost"],"preconditions":{},"moveTemplate":"Can you remove the supplies markup from the total?"},
+ {"id":"challenge_weekend_fee","name":"Challenge weekend fee","category":"fee_challenges","selectionSignals":["weekend fee","saturday rate"],"preconditions":{},"moveTemplate":"Can you reduce the weekend fee for this booking?"},
+ {"id":"challenge_holiday_surcharge","name":"Challenge holiday surcharge","category":"fee_challenges","selectionSignals":["holiday surcharge","holiday rate"],"preconditions":{},"moveTemplate":"Can you waive the holiday surcharge for this service?"},
+ {"id":"challenge_key_pickup_fee","name":"Challenge key pickup fee","category":"fee_challenges","selectionSignals":["key pickup","key fee"],"preconditions":{},"moveTemplate":"Can you remove the key pickup fee?"},
+ {"id":"challenge_parking_fee","name":"Challenge parking fee","category":"fee_challenges","selectionSignals":["parking fee","parking charge"],"preconditions":{},"moveTemplate":"Can you include parking in the base price?"},
+ {"id":"waive_reschedule_fee","name":"Waive reschedule fee","category":"fee_challenges","selectionSignals":["reschedule fee","change fee"],"preconditions":{},"moveTemplate":"Can you waive one rescheduling fee?"},
+ {"id":"challenge_tax_estimate","name":"Challenge tax estimate","category":"fee_challenges","selectionSignals":["estimated tax","taxes extra"],"preconditions":{},"moveTemplate":"Can you confirm the tax is included in the total?"}
+]

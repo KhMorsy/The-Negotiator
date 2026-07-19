@@ -9,7 +9,7 @@ export interface CatalogViolation {
 const categories: SkillCategory[] = ["fee_challenges", "commitment_leverage", "market_leverage", "clarification", "trust_verification", "timing_flexibility"];
 const idPattern = /^(challenge|ask|leverage|clarify|confirm|negotiate|request|waive)_[a-z0-9_]+$/;
 const allowedVariables = new Set(["competingTotal", "targetTotal", "frequency", "jobType", "feeAmount", "feeType"]);
-const leveragePattern = /quote|competing|other (company|cleaner)|beat|match.*price/i;
+const leveragePattern = /competing|other (company|cleaner|quote)|beat|match.*price/i;
 
 export function validateCatalog(skills: CatalogSkill[]): CatalogViolation[] {
   const violations: CatalogViolation[] = [];

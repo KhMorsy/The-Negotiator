@@ -1,0 +1,11 @@
+[
+ {"id":"confirm_liability_insurance","name":"Confirm liability insurance","category":"trust_verification","selectionSignals":["liability insurance","insured company"],"preconditions":{},"moveTemplate":"Do you carry liability insurance for this service?"},
+ {"id":"confirm_bonding","name":"Confirm bonding","category":"trust_verification","selectionSignals":["bonded cleaners","bonding coverage"],"preconditions":{},"moveTemplate":"Are your cleaners bonded?"},
+ {"id":"confirm_satisfaction_guarantee","name":"Confirm satisfaction guarantee","category":"trust_verification","selectionSignals":["satisfaction guarantee","redo policy"],"preconditions":{},"moveTemplate":"What is your satisfaction guarantee policy?"},
+ {"id":"confirm_background_checks","name":"Confirm background checks","category":"trust_verification","selectionSignals":["background checks","screened staff"],"preconditions":{},"moveTemplate":"Do you background-check cleaning staff?"},
+ {"id":"confirm_damage_policy","name":"Confirm damage policy","category":"trust_verification","selectionSignals":["damage policy","broken item"],"preconditions":{},"moveTemplate":"What is your policy if an item is damaged?"},
+ {"id":"confirm_cleaner_consistency","name":"Confirm cleaner consistency","category":"trust_verification","selectionSignals":["same cleaner","regular team"],"preconditions":{},"moveTemplate":"Can the same cleaner return for recurring visits?"},
+ {"id":"request_recent_references","name":"Request recent references","category":"trust_verification","selectionSignals":["recent references","customer references"],"preconditions":{},"moveTemplate":"Can you share recent customer references?"},
+ {"id":"confirm_service_guarantee","name":"Confirm service guarantee","category":"trust_verification","selectionSignals":["service guarantee","guaranteed clean"],"preconditions":{},"moveTemplate":"Do you guarantee the agreed cleaning scope?"},
+ {"id":"confirm_supervision_policy","name":"Confirm supervision policy","category":"trust_verification","selectionSignals":["team supervision","crew lead"],"preconditions":{},"moveTemplate":"Who supervises the cleaning team on site?"}
+]

@@ -1,0 +1,11 @@
+[
+ {"id":"ask_weekday_discount","name":"Ask weekday discount","category":"timing_flexibility","selectionSignals":["weekday opening","monday slot"],"preconditions":{},"moveTemplate":"Can you offer a lower rate for a weekday?"},
+ {"id":"ask_off_peak_discount","name":"Ask off peak discount","category":"timing_flexibility","selectionSignals":["off peak","quiet hours"],"preconditions":{},"moveTemplate":"Is there an off-peak rate for this job?"},
+ {"id":"ask_flexible_arrival_discount","name":"Ask flexible arrival discount","category":"timing_flexibility","selectionSignals":["flexible arrival","open schedule"],"preconditions":{},"moveTemplate":"Can flexibility on arrival time reduce the price?"},
+ {"id":"ask_midday_discount","name":"Ask midday discount","category":"timing_flexibility","selectionSignals":["midday opening","afternoon slot"],"preconditions":{},"moveTemplate":"Can you offer a lower midday rate?"},
+ {"id":"ask_last_minute_discount","name":"Ask last minute discount","category":"timing_flexibility","selectionSignals":["tomorrow opening","last minute"],"preconditions":{},"moveTemplate":"Is there a discount for an open slot tomorrow?"},
+ {"id":"ask_recurring_schedule_discount","name":"Ask recurring schedule discount","category":"timing_flexibility","selectionSignals":["fixed schedule","same time"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"Can a fixed {{frequency}} schedule lower the rate?"},
+ {"id":"ask_low_demand_day_discount","name":"Ask low demand day discount","category":"timing_flexibility","selectionSignals":["slow day","low demand"],"preconditions":{},"moveTemplate":"Which lower-demand day has the best rate?"},
+ {"id":"ask_cancellation_fill_discount","name":"Ask cancellation fill discount","category":"timing_flexibility","selectionSignals":["cancellation opening","fill a slot"],"preconditions":{},"moveTemplate":"Can you offer a rate for filling a cancellation?"},
+ {"id":"ask_seasonal_discount","name":"Ask seasonal discount","category":"timing_flexibility","selectionSignals":["seasonal rate","quiet season"],"preconditions":{},"moveTemplate":"Do you offer a lower rate in the quiet season?"}
+]
