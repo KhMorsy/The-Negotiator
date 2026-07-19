@@ -1,4 +1,4 @@
-import type { JobSpec, LLMParser } from "@/contracts";
+import type { LLMParser } from "@/contracts";
 
 type ParsedQuote = Awaited<ReturnType<LLMParser["extractQuoteFromTranscript"]>>;
 
@@ -41,4 +41,3 @@ export function createFakeLlmParser(): LLMParser {
     },
   };
 }
-
