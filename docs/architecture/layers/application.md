@@ -64,6 +64,9 @@ retaining the simulated adapter unless explicit Twilio configuration is present.
 PR-B6 exposes persisted call rows through the call-status API for the live
 dashboard's polling fallback and Supabase Realtime feed.
 
+PR-B7 adds `ReportComposer.composeDrilldowns()`. The reports API returns the
+primary report with savings, red-flag, and trust drill-down data.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

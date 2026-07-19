@@ -34,12 +34,15 @@ The confirmation screen posts to `/api/job-specs/[id]/confirm` and disables its
 CTA once the API returns a confirmed job spec.
 
 The report screen fetches `/api/reports/[jobId]` when no initial report is
-supplied, with disabled D/E/F drill-down stubs until T2.
+supplied and renders the report's D/E/F drill-down data.
 
 PR-B6 replaces the fixture-based calls view with `LiveCallsScreen`. It uses
 `useCallStatusFeed` to fetch `/api/calls/[jobId]/status`, polling when fake
 Realtime is selected or Supabase browser credentials are unavailable, and
 subscribing to the `calls` table otherwise.
+
+PR-B7 replaces disabled report stubs with semantic `<details>` expanders for
+savings, red flags, and trust signals returned by the reports API.
 
 ## Testing rules
 
