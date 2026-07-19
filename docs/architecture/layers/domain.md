@@ -22,7 +22,7 @@ Pure business logic that wins the challenge: honesty gate, skill filtering, quot
 |--------|------|------|
 | Skill preconditions (honesty gate) | `src/domain/skills/filterEligibleSkills.ts` | Pure function |
 | Skill engine | `src/domain/skills/skillEngine.ts` | Uses `LLMPlanner` + `KnowledgeBase` + `AuditRepository` ports |
-| Seeded skills loader | `src/domain/skills/loadSkills.ts` | Reads skill definitions from contracts/config |
+| Seeded skills loader | `src/domain/skills/loadSkills.ts` | Reads JSON skill definitions from config |
 | Quote extractor | `src/domain/quotes/extractQuote.ts` | Uses `LLMParser` |
 | Job Spec Builder | `src/domain/jobSpec/buildJobSpec.ts` | Pure merge + validate |
 | Quote Normalizer | `src/domain/report/normalizeQuote.ts` | Pure |
