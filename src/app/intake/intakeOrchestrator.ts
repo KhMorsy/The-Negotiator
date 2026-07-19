@@ -1,6 +1,21 @@
 import type { JobSpec, JobSpecRepository, SpeechAgent } from "@/contracts";
 import { DocumentParserService } from "./documentParserService";
 
+type LiveInterviewDetails = Partial<
+  Pick<
+    JobSpec,
+    | "sqft"
+    | "bedrooms"
+    | "bathrooms"
+    | "frequency"
+    | "pets"
+    | "addOns"
+    | "suppliesProvided"
+    | "accessNotes"
+    | "conditionNotes"
+  >
+>;
+
 function extractFieldsFromTranscript(
   turns: Array<{ role: string; text: string }>,
 ): Partial<JobSpec> {
@@ -32,6 +47,10 @@ export class IntakeOrchestrator {
     return this.deps.jobSpecRepo.updateDraft(jobSpecId, {
       ...extractFieldsFromTranscript(turns), jobType: "recurring_weekly",
     });
+  }
+
+  async applyLiveInterviewDetails(jobSpecId: string, details: LiveInterviewDetails) {
+    return this.deps.jobSpecRepo.updateDraft(jobSpecId, details);
   }
 
   async applyQuoteDocument(jobSpecId: string, bytes: Uint8Array, mimeType: string) {

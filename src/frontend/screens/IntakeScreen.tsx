@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
 import type { JobSpec } from "@/contracts";
 import { JourneyStepper } from "@/frontend/components/JourneyStepper";
@@ -9,12 +9,18 @@ export function IntakeScreen({
   jobSpec: initialJobSpec,
   jobId,
   sessionId,
+  LiveVoiceInterviewComponent,
 }: {
   jobSpec?: JobSpec;
   jobId?: string;
   sessionId?: string;
+  LiveVoiceInterviewComponent?: ComponentType<{
+    jobSpecId: string;
+    onSynced: (jobSpec: JobSpec) => void;
+  }>;
 }) {
   const id = initialJobSpec?.id ?? jobId ?? "";
+  const LiveVoiceInterview = LiveVoiceInterviewComponent;
   const session = sessionId ?? `fake-session-${id}`;
   const [jobSpec, setJobSpec] = useState<JobSpec | null>(initialJobSpec ?? null);
   const [notFound, setNotFound] = useState(false);
@@ -109,7 +115,7 @@ export function IntakeScreen({
         className="space-y-3 rounded-2xl border-2 border-dashed border-apricot bg-apricot-soft/40 p-8 text-center"
       >
         <p className="text-muted-warm">
-          Voice interview (ElevenLabs when live keys are set; simulated otherwise)
+          Simulated fallback — use this only if the live ElevenLabs interview is unavailable.
         </p>
         <button
           type="button"
@@ -118,7 +124,7 @@ export function IntakeScreen({
           disabled={busy || voiceSynced}
           className="rounded-full bg-pine px-5 py-2.5 font-bold text-white hover:bg-pine/90 disabled:opacity-50"
         >
-          {voiceSynced ? "Interview synced" : "Run simulated voice interview"}
+          {voiceSynced ? "Simulated interview synced" : "Run simulated fallback"}
         </button>
         {voiceSynced && jobSpec && (
           <p className="text-sm font-bold text-pine">
@@ -128,6 +134,7 @@ export function IntakeScreen({
           </p>
         )}
       </div>
+      {LiveVoiceInterview && <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />}
       <div
         data-testid="intake-upload-quote"
         className="rounded-2xl border border-linen bg-white p-5"

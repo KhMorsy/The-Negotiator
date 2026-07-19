@@ -71,6 +71,11 @@ PR-I2 adds the T2 simulated integration gate and judge runbook. The gate
 asserts adapter defaults and exercises intake, call status, audit, report, and
 drill-downs through one composition root.
 
+The opt-in live intake pilot registers an ElevenLabs `complete_intake` client
+tool in the browser. When the agent calls it, `POST /api/intake/[jobSpecId]/complete-live`
+validates the supplied interview fields and updates the unconfirmed job draft
+before disconnecting the conversation.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

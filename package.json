@@ -16,6 +16,7 @@
     "ci": "npm run lint && npm run typecheck && npm run arch:check && npm run test && npm run build"
   },
   "dependencies": {
+    "@elevenlabs/react": "^1.10.1",
     "@supabase/supabase-js": "^2.110.7",
     "next": "^15.5.7",
     "react": "^19.0.0",
