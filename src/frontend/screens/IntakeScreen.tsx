@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { JobSpec } from "@/contracts";
+import { LiveVoiceInterview } from "@/frontend/components/LiveVoiceInterview";
 
 export function IntakeScreen({
   jobSpec: initialJobSpec,
@@ -105,7 +106,7 @@ export function IntakeScreen({
         className="space-y-3 rounded-lg border border-dashed border-gray-300 p-8 text-center"
       >
         <p className="text-gray-600">
-          Voice interview (ElevenLabs when live keys are set; simulated otherwise)
+          Simulated fallback — use this only if the live ElevenLabs interview is unavailable.
         </p>
         <button
           type="button"
@@ -114,7 +115,7 @@ export function IntakeScreen({
           disabled={busy || voiceSynced}
           className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
         >
-          {voiceSynced ? "Interview synced" : "Run simulated voice interview"}
+          {voiceSynced ? "Simulated interview synced" : "Run simulated fallback"}
         </button>
         {voiceSynced && jobSpec && (
           <p className="text-sm text-green-700">
@@ -124,6 +125,7 @@ export function IntakeScreen({
           </p>
         )}
       </div>
+      <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />
       <div data-testid="intake-upload-quote">
         <label className="block text-sm font-medium">
           Upload existing quote (PDF/image) — optional leverage

@@ -31,6 +31,32 @@ describe("IntakeOrchestrator", () => {
     expect(updated).toMatchObject({ sqft: 1800, bedrooms: 3, confirmed: false });
   });
 
+  it("records details supplied by a completed live interview", async () => {
+    const { orchestrator } = buildOrchestrator();
+    const { jobSpecId } = await orchestrator.startIntake("Austin, TX");
+
+    const updated = await orchestrator.applyLiveInterviewDetails(jobSpecId, {
+      sqft: 2150,
+      bedrooms: 4,
+      bathrooms: 3,
+      frequency: "biweekly",
+      pets: true,
+      addOns: ["inside fridge"],
+      accessNotes: "Concierge has a key",
+    });
+
+    expect(updated).toMatchObject({
+      sqft: 2150,
+      bedrooms: 4,
+      bathrooms: 3,
+      frequency: "biweekly",
+      pets: true,
+      addOns: ["inside fridge"],
+      accessNotes: "Concierge has a key",
+      confirmed: false,
+    });
+  });
+
   it("applies a document leverage amount", async () => {
     const { orchestrator } = buildOrchestrator();
     const { jobSpecId } = await orchestrator.startIntake("Austin, TX");

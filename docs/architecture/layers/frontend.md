@@ -44,6 +44,11 @@ subscribing to the `calls` table otherwise.
 PR-B7 replaces disabled report stubs with semantic `<details>` expanders for
 savings, red flags, and trust signals returned by the reports API.
 
+The opt-in live intake pilot uses the ElevenLabs React client only from
+`LiveVoiceInterview`. Its `complete_intake` client-tool callback posts the
+validated fields to the intake API and refreshes the job draft; the simulated
+voice button remains a clearly labelled fallback for the CI/demo path.
+
 ## Testing rules
 
 - Component tests with Testing Library + Vitest where logic exists.

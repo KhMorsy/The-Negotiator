@@ -12,10 +12,7 @@ export function createElevenLabsAgentAdapter(): SpeechAgent {
 
   return {
     async startIntakeSession(jobSpecDraftId) {
-      const { conversationId } = await client.startConversation(agentId, {
-        jobSpecDraftId,
-      });
-      return { sessionId: conversationId };
+      return { sessionId: `pending-${jobSpecDraftId}` };
     },
 
     async getIntakeTranscript(sessionId) {

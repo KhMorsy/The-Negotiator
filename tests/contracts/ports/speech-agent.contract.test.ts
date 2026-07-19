@@ -41,10 +41,6 @@ describe("SpeechAgent contract — elevenlabs (mocked HTTP)", () => {
         .fn()
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ conversation_id: "conv-contract" }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
           json: async () => ({
             transcript: [{ role: "agent", message: "Hello" }],
           }),
