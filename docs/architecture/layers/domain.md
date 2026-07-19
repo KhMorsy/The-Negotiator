@@ -24,7 +24,7 @@ Pure business logic that wins the challenge: honesty gate, skill filtering, quot
 | Skill engine | `src/domain/skills/skillEngine.ts` | Uses `LLMPlanner` + `KnowledgeBase` + `AuditRepository` ports |
 | Seeded skills loader | `src/domain/skills/loadSkills.ts` | Reads JSON skill definitions from config |
 | Quote extractor | `src/domain/quotes/extractQuote.ts` | Uses `LLMParser` + `QuoteRepository` ports |
-| Job Spec Builder | `src/domain/jobSpec/buildJobSpec.ts` | Pure merge + validate |
+| Job Spec Builder | `src/domain/jobSpec/buildJobSpec.ts` | Pure merge + Zod validate |
 | Quote Normalizer | `src/domain/report/normalizeQuote.ts` | Pure |
 | RedFlag Evaluator | `src/domain/report/evaluateRedFlags.ts` | Pure |
 | Trust Scorer | `src/domain/report/scoreTrust.ts` | Pure |
