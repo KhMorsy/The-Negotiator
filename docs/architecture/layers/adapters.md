@@ -42,6 +42,7 @@ credentials are present. The fake remains the default for CI and local demos.
 - Fake per-port repos: `src/adapters/fake/inMemory{JobSpec,Call,Quote,Audit}Repository.ts`
 - Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
 - Supabase schema doc: `supabase/migrations/001_init.sql`
+- Call repositories persist call outcomes and optional recording URLs.
 
 ## Knowledge-base adapters
 

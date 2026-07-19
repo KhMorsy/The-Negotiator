@@ -26,6 +26,7 @@ export interface CallRepository {
   }): Promise<Call>;
   getById(id: string): Promise<Call | null>;
   updateOutcome(callId: string, outcome: CallOutcome): Promise<Call>;
+  updateRecordingUrl(callId: string, recordingUrl: string): Promise<Call>;
   listByJobSpec(jobSpecId: string): Promise<Call[]>;
 }
 
@@ -43,4 +44,3 @@ export interface AuditRepository {
   append(event: Omit<AuditEvent, "id" | "createdAt">): Promise<AuditEvent>;
   listByCall(callId: string): Promise<AuditEvent[]>;
 }
-

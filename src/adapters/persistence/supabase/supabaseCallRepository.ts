@@ -55,6 +55,23 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
       return mapCallRow(data as Record<string, unknown>);
     },
 
+    async updateRecordingUrl(callId, recordingUrl) {
+      const { data, error } = await client
+        .from("calls")
+        .update({ recording_url: recordingUrl })
+        .eq("id", callId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (!data) {
+        throw new Error(`Call not found: ${callId}`);
+      }
+
+      return mapCallRow(data as Record<string, unknown>);
+    },
+
     async listByJobSpec(jobSpecId) {
       const { data, error } = await client
         .from("calls")
