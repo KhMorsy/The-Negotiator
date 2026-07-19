@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
 
-test("home page loads The Negotiator hero", async ({ page }) => {
+test("home page loads the Hagal hero", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("banner")).toContainText("The Negotiator");
+  await expect(page.getByRole("banner")).toContainText("Hagal");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "The Negotiator",
+    "Hagal calls the cleaners.",
   );
   await expect(page.getByText(/dual-income family/i)).toBeVisible();
 });

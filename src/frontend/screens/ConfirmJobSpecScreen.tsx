@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { JobSpec } from "@/contracts";
+import { JourneyStepper } from "@/frontend/components/JourneyStepper";
 
 export function ConfirmJobSpecScreen({
   jobSpec: initial,
@@ -58,9 +59,9 @@ export function ConfirmJobSpecScreen({
   if (notFound) {
     return (
       <section className="space-y-4" data-testid="confirm-screen">
-        <h1 className="text-2xl font-semibold">Job not found</h1>
-        <p className="text-gray-600">
-          <Link href="/" className="underline">
+        <h1 className="font-display text-3xl text-pine">Job not found</h1>
+        <p className="text-muted-warm">
+          <Link href="/" className="font-bold text-terracotta underline">
             Start a new quote from the home page.
           </Link>
         </p>
@@ -73,45 +74,71 @@ export function ConfirmJobSpecScreen({
   }
 
   return (
-    <section className="space-y-6" data-testid="confirm-screen">
-      <h1 className="text-2xl font-semibold">Confirm your job spec</h1>
-      <dl className="grid grid-cols-2 gap-4 text-sm">
-        <dt className="font-medium">Square feet</dt>
-        <dd>{jobSpec.sqft}</dd>
-        <dt className="font-medium">Leverage quote</dt>
-        <dd>{jobSpec.leverageQuoteAmount ? `$${jobSpec.leverageQuoteAmount}` : "—"}</dd>
-        <dt className="font-medium">Bedrooms / Bathrooms</dt>
-        <dd>
-          {jobSpec.bedrooms} / {jobSpec.bathrooms}
-        </dd>
-        <dt className="font-medium">Frequency</dt>
-        <dd>{jobSpec.frequency}</dd>
-        <dt className="font-medium">Job type</dt>
-        <dd>{jobSpec.jobType}</dd>
-      </dl>
+    <section className="space-y-8" data-testid="confirm-screen">
+      <JourneyStepper current="confirm" />
+      <h1 className="font-display text-3xl text-pine">
+        Confirm your job — Hagal reads it back
+      </h1>
+      <div className="rounded-2xl border border-linen bg-white p-6">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+          <div>
+            <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-warm">
+              Square feet
+            </dt>
+            <dd className="font-display text-lg text-ink">{jobSpec.sqft}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-warm">
+              Leverage quote
+            </dt>
+            <dd className="font-display text-lg text-ink">
+              {jobSpec.leverageQuoteAmount ? `$${jobSpec.leverageQuoteAmount}` : "—"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-warm">
+              Bedrooms / Bathrooms
+            </dt>
+            <dd className="font-display text-lg text-ink">
+              {jobSpec.bedrooms} / {jobSpec.bathrooms}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-warm">
+              Frequency
+            </dt>
+            <dd className="font-display text-lg text-ink">{jobSpec.frequency}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-warm">
+              Job type
+            </dt>
+            <dd className="font-display text-lg text-ink">{jobSpec.jobType}</dd>
+          </div>
+        </dl>
+      </div>
       <button
         type="button"
         data-testid="confirm-job-spec-button"
-        className="rounded-lg bg-black px-5 py-3 text-white disabled:opacity-50"
+        className="rounded-full bg-terracotta px-6 py-3 font-extrabold text-white hover:bg-terracotta-dark disabled:opacity-50"
         disabled={jobSpec.confirmed || loading}
         onClick={handleConfirm}
       >
-        {jobSpec.confirmed ? "Confirmed" : "Confirm and start calling vendors"}
+        {jobSpec.confirmed ? "Confirmed" : "Looks right — send Hagal to negotiate"}
       </button>
       {jobSpec.sqft <= 0 && !jobSpec.confirmed && (
-        <p className="text-sm text-amber-700">
-          Job spec is incomplete — run the voice interview on the intake page
-          first.
+        <p className="rounded-2xl bg-apricot-soft px-4 py-3 text-sm font-bold text-terracotta-dark">
+          Job spec is incomplete — run the voice interview on the intake page first.
         </p>
       )}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm font-bold text-terracotta-dark">{error}</p>}
       {callsStarted && (
         <Link
           href={`/calls/${jobSpec.id}`}
           data-testid="view-calls-link"
-          className="inline-flex rounded-lg border border-black px-5 py-3 hover:bg-gray-50"
+          className="inline-flex rounded-full border-2 border-pine px-6 py-3 font-extrabold text-pine hover:bg-sage/40"
         >
-          Negotiation started — view call status
+          Negotiation started — watch Hagal&apos;s calls
         </Link>
       )}
     </section>
