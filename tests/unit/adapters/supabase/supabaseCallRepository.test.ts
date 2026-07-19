@@ -49,5 +49,51 @@ describe("createSupabaseCallRepository", () => {
       recordingUrl: null,
     });
   });
-});
 
+  it("maps recording URL updates to snake_case columns", async () => {
+    let updatedRow: Record<string, unknown> | null = null;
+
+    const client: SupabaseClient = {
+      from() {
+        return {
+          insert() {
+            throw new Error("not needed");
+          },
+          select() {
+            throw new Error("not needed");
+          },
+          update(row) {
+            updatedRow = row;
+            return {
+              async eq(_column, id) {
+                return {
+                  data: {
+                    id,
+                    job_spec_id: "js_1",
+                    vendor_id: "v_1",
+                    round: 1,
+                    outcome: null,
+                    ...row,
+                  },
+                  error: null,
+                };
+              },
+            };
+          },
+        };
+      },
+    };
+
+    const updated = await createSupabaseCallRepository(client).updateRecordingUrl(
+      "c_1",
+      "https://storage.example/recordings/c_1.mp3",
+    );
+
+    expect(updatedRow).toEqual({
+      recording_url: "https://storage.example/recordings/c_1.mp3",
+    });
+    expect(updated.recordingUrl).toBe(
+      "https://storage.example/recordings/c_1.mp3",
+    );
+  });
+});

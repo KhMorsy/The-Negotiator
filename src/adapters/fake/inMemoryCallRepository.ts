@@ -32,9 +32,18 @@ export function createInMemoryCallRepository(): CallRepository {
       return updated;
     },
 
+    async updateRecordingUrl(callId, recordingUrl) {
+      const existing = store.get(callId);
+      if (!existing) {
+        throw new Error(`Call not found: ${callId}`);
+      }
+      const updated: Call = { ...existing, recordingUrl };
+      store.set(callId, updated);
+      return updated;
+    },
+
     async listByJobSpec(jobSpecId) {
       return [...store.values()].filter((c) => c.jobSpecId === jobSpecId);
     },
   };
 }
-

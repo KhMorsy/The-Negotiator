@@ -30,6 +30,17 @@ export function callRepositoryContract(
       expect(updated.outcome).toBe("itemized_quote");
     });
 
+    it("updateRecordingUrl persists the recording URL", async () => {
+      const call = await repo.create({ jobSpecId, vendorId, round: 1 });
+      const updated = await repo.updateRecordingUrl(
+        call.id,
+        "https://storage.example/recordings/call.mp3",
+      );
+      expect(updated.recordingUrl).toBe(
+        "https://storage.example/recordings/call.mp3",
+      );
+    });
+
     it("listByJobSpec returns calls for job", async () => {
       await repo.create({ jobSpecId, vendorId, round: 1 });
       await repo.create({ jobSpecId, vendorId, round: 2 });
@@ -48,4 +59,3 @@ export function callRepositoryContract(
 import { createInMemoryCallRepository } from "@/adapters/fake/inMemoryCallRepository";
 
 callRepositoryContract("in-memory", createInMemoryCallRepository);
-

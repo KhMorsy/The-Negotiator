@@ -81,7 +81,7 @@ findVendors(input: { geo: string; jobType: JobType; limit: number }): Promise<Ve
 
 // Repositories
 JobSpecRepository: create | getById | confirm | updateDraft
-CallRepository: create | getById | updateOutcome | listByJobSpec
+CallRepository: create | getById | updateOutcome | updateRecordingUrl | listByJobSpec
 QuoteRepository: create | listByJobSpec | getById
 AuditRepository: append | listByCall
 ```

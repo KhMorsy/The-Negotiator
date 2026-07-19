@@ -57,6 +57,9 @@ audit, and report routes so the simulated flow shares one in-memory state.
 PR-A6 makes `createContainer.ts` select the fake `SpeechAgent` by default and
 the ElevenLabs adapter only when the explicit env flag and credentials are set.
 
+PR-A7 applies the same composition-root selection pattern to telephony,
+retaining the simulated adapter unless explicit Twilio configuration is present.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

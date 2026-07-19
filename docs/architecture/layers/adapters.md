@@ -36,12 +36,17 @@ PR-A6 adds `ElevenLabsAgentAdapter` behind `SpeechAgent`; the composition root
 selects it only when `USE_SIMULATED_SPEECH=false` and both ElevenLabs
 credentials are present. The fake remains the default for CI and local demos.
 
+PR-A7 adds a Twilio adapter behind `TelephonyProvider`; the composition root
+keeps simulated telephony by default and selects Twilio only when
+`USE_SIMULATED_TELEPHONY=false` with the required Twilio and ElevenLabs values.
+
 ## Repository adapters
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
 - Fake per-port repos: `src/adapters/fake/inMemory{JobSpec,Call,Quote,Audit}Repository.ts`
 - Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
 - Supabase schema doc: `supabase/migrations/001_init.sql`
+- Call repositories persist call outcomes and optional recording URLs.
 
 ## Knowledge-base adapters
 
