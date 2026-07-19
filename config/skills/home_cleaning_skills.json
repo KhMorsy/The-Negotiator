@@ -1,0 +1,14 @@
+[
+  {"id":"leverage_competing_bid","name":"Leverage competing quote","selectionSignals":["competing quote","beat price","written estimate"],"preconditions":{"requiresCompetingQuote":true,"minQuotesInHand":1},"moveTemplate":"I have a written quote for ${{competingTotal}} all-in — can you beat that?"},
+  {"id":"challenge_trip_fee","name":"Challenge trip fee","selectionSignals":["trip fee","travel charge","dispatch fee"],"preconditions":{},"moveTemplate":"Can you waive or reduce the trip fee so the total is closer to ${{targetTotal}}?"},
+  {"id":"challenge_first_clean_premium","name":"Challenge first-clean premium","selectionSignals":["first clean","initial deep","first visit surcharge"],"preconditions":{},"moveTemplate":"Is the first-clean premium required, or can you match ongoing pricing?"},
+  {"id":"challenge_supplies_fee","name":"Challenge supplies fee","selectionSignals":["supplies fee","product charge","materials"],"preconditions":{},"moveTemplate":"Can you include supplies in the base price instead of a separate fee?"},
+  {"id":"challenge_weekend_surcharge","name":"Challenge weekend surcharge","selectionSignals":["weekend","Saturday","Sunday surcharge"],"preconditions":{},"moveTemplate":"Can you drop the weekend surcharge if we book a weekday instead?"},
+  {"id":"ask_recurring_discount","name":"Ask recurring discount","selectionSignals":["weekly","biweekly","monthly","recurring"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"What recurring discount can you offer for {{frequency}} service?"},
+  {"id":"ask_bundle_discount","name":"Ask bundle discount","selectionSignals":["add-on","oven","fridge","multiple services"],"preconditions":{},"moveTemplate":"If we bundle add-ons, can you reduce the all-in total?"},
+  {"id":"clarify_pricing_model","name":"Clarify pricing model","selectionSignals":["hourly","per hour","minimum hours","per sqft"],"preconditions":{},"moveTemplate":"Can you confirm whether this is flat or hourly with a minimum, and the all-in total?"},
+  {"id":"confirm_insurance_guarantee","name":"Confirm insurance and guarantee","selectionSignals":["insured","bonded","guarantee","satisfaction"],"preconditions":{},"moveTemplate":"Are you insured and bonded, and do you guarantee the clean?"},
+  {"id":"negotiate_minimum_hours","name":"Negotiate minimum hours","selectionSignals":["minimum hours","3 hour minimum","hourly minimum"],"preconditions":{},"moveTemplate":"Can you lower the minimum hours for this job size?"},
+  {"id":"request_all_in_total","name":"Request all-in total","selectionSignals":["plus fees","before tax","total price"],"preconditions":{},"moveTemplate":"What is the all-in total including every fee for this exact job?"},
+  {"id":"waive_cancellation_fee","name":"Waive cancellation fee","selectionSignals":["cancellation","reschedule fee","cancel policy"],"preconditions":{},"moveTemplate":"Can you waive the cancellation fee if we need to reschedule once?"}
+]
