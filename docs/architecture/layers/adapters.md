@@ -22,7 +22,7 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 |------|--------------|---------------------|
 | `TelephonyProvider` | `src/adapters/telephony/twilioElevenLabs.ts` | `src/adapters/fake/simulatedTelephony.ts` — personas: `vendor-tough`, `vendor-lowball`, `vendor-upseller` |
 | `SpeechAgent` | `src/adapters/speech/elevenLabsAgent.ts` | `src/adapters/fake/fakeSpeechAgent.ts` |
-| `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiAdapter.ts` | `src/adapters/fake/fakeLlmParser.ts` |
+| `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiVisionAdapter.ts` (`parseRoomPhotos`) | `src/adapters/fake/fakeDocumentParser.ts`, `fakeLlmParser.ts` |
 | `KnowledgeBase` | `src/adapters/kb/tavilyKb.ts` (live), `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
@@ -39,6 +39,8 @@ credentials are present. The fake remains the default for CI and local demos.
 PR-A7 adds a Twilio adapter behind `TelephonyProvider`; the composition root
 keeps simulated telephony by default and selects Twilio only when
 `USE_SIMULATED_TELEPHONY=false` with the required Twilio and ElevenLabs values.
+
+PR-B8 adds `parseRoomPhotos` on `DocumentParser` via `openAiVisionAdapter.ts`; CI keeps `createFakeDocumentParser()`. Live vision activates when `USE_FAKE_DOCUMENT_PARSER=false` and `OPENAI_API_KEY` are set.
 
 PR-A10 adds `createTavilyKb` behind `KnowledgeBase`. The composition root
 selects it when `KB_PROVIDER=tavily` and `TAVILY_API_KEY` are set; otherwise

@@ -41,4 +41,12 @@ export class IntakeOrchestrator {
       ...(leverageQuoteAmount === undefined ? {} : { leverageQuoteAmount }),
     });
   }
+
+  async mergeRoomPhotos(
+    jobSpecId: string,
+    images: Array<{ bytes: Uint8Array; mimeType: string }>,
+  ): Promise<JobSpec> {
+    const patch = await this.deps.documentParserService.parseRoomPhotos(images);
+    return this.deps.jobSpecRepo.updateDraft(jobSpecId, patch);
+  }
 }
