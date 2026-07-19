@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { ReportComposer } from "@/app/report/reportComposer";
+import { GET } from "@/app/api/reports/[jobId]/route";
 import { createInMemoryQuoteRepository } from "@/adapters/fake/inMemoryRepos";
 import type { JobSpec, Vendor } from "@/contracts";
 
@@ -18,5 +19,15 @@ describe("ReportComposer", () => {
     expect(report.rankedQuotes).toHaveLength(2);
     expect(report.recommendedQuoteId).toBeTruthy();
     expect(report.plainLanguageWhy).toMatch(/Sparkle Pro|insured/i);
+  });
+});
+
+describe("GET /api/reports/[jobId]", () => {
+  it("returns report JSON", async () => {
+    const response = await GET(new Request("http://localhost/api/reports/job-report-1"), {
+      params: Promise.resolve({ jobId: "job-report-1" }),
+    });
+    expect(response.status).toBe(200);
+    expect((await response.json()).report.plainLanguageWhy).toBeTruthy();
   });
 });
