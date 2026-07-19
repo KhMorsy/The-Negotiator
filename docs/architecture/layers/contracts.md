@@ -36,6 +36,7 @@ Owns the **shared language** of the system: TypeScript types, Zod schemas, port 
 | `src/contracts/types/quote.ts` | `Quote`, `QuoteFee`, `PricingModel` |
 | `src/contracts/types/call.ts` | `Call`, `CallOutcome`, `CallRound` |
 | `src/contracts/types/skill.ts` | `Skill`, `SkillPreconditions`, `SkillSelectionSignals` |
+| `src/contracts/types/skill-catalog.ts` | `CatalogSkill`, `SkillCategory` for generated catalog entries |
 | `src/contracts/types/audit.ts` | `AuditEvent` |
 | `src/contracts/types/vendor.ts` | `Vendor` |
 | `src/contracts/types/report.ts` | `ReportPrimary`, `ReportDrilldowns` |
