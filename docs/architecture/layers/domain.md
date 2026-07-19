@@ -25,10 +25,10 @@ Pure business logic that wins the challenge: honesty gate, skill filtering, quot
 | Seeded skills loader | `src/domain/skills/loadSkills.ts` | Reads JSON skill definitions from config |
 | Quote extractor | `src/domain/quotes/extractQuote.ts` | Uses `LLMParser` + `QuoteRepository` ports |
 | Job Spec Builder | `src/domain/jobSpec/buildJobSpec.ts` | Pure merge + Zod validate |
-| Quote Normalizer | `src/domain/report/normalizeQuote.ts` | Pure |
-| RedFlag Evaluator | `src/domain/report/evaluateRedFlags.ts` | Pure |
-| Trust Scorer | `src/domain/report/scoreTrust.ts` | Pure |
-| Ranker | `src/domain/report/rankQuotes.ts` | Pure |
+| Quote Normalizer | `src/domain/report/normalizeQuote.ts` | Pure (flat/hourly/per-sqft) |
+| RedFlag Evaluator | `src/domain/report/evaluateRedFlags.ts` | Pure (benchmark rules) |
+| Trust Scorer | `src/domain/report/scoreTrust.ts` | Pure (vendor signals) |
+| Ranker | `src/domain/report/rankQuotes.ts` | Pure (trust/price/red flags) |
 | Audit Logger | `src/domain/audit/appendAuditEvent.ts` | Uses `AuditRepository` |
 
 ## Honesty gate (non-negotiable)
