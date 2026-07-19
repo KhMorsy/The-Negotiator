@@ -39,7 +39,8 @@ credentials are present. The fake remains the default for CI and local demos.
 
 The opt-in live intake pilot adds the client-side `LiveVoiceInterview` adapter.
 It owns the ElevenLabs React SDK and exposes the `complete_intake` client tool;
-`src/app/composition/LiveIntakeScreen.tsx` wires it into the frontend screen.
+`src/app/composition/LiveIntakeScreen.tsx` wires it into the frontend screen as
+the primary interview action.
 
 PR-A7 adds a Twilio adapter behind `TelephonyProvider`; the composition root
 keeps simulated telephony by default and selects Twilio only when

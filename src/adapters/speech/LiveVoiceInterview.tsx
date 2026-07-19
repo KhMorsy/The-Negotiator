@@ -107,19 +107,33 @@ function LiveVoiceInterviewControls({
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-green-300 p-4" data-testid="live-voice-interview">
-      <p className="text-sm font-medium">Live ElevenLabs interview</p>
+    <div
+      className="space-y-3 rounded-2xl border border-linen bg-white p-5 shadow-sm"
+      data-testid="live-voice-interview"
+    >
+      <div>
+        <p className="font-extrabold text-ink">Talk to Hagal</p>
+        <p className="text-sm text-muted-warm">A live voice interview captures your cleaning details.</p>
+      </div>
       <button
         type="button"
         onClick={status === "connected" ? endSession : startInterview}
         disabled={!agentId || syncing || status === "connecting"}
-        className="rounded-lg bg-green-700 px-4 py-2 text-white disabled:opacity-50"
+        className="rounded-full bg-terracotta px-5 py-2.5 font-bold text-white hover:bg-terracotta-dark disabled:opacity-50"
       >
-        {status === "connected" ? "End and sync interview" : "Start live voice interview"}
+        {status === "connected" ? "End voice interview" : "Start voice interview"}
       </button>
-      {status === "connected" && <p className="text-sm text-green-700">Connected — the interview saves and ends automatically when Alex has the details.</p>}
-      {syncing && <p className="text-sm text-gray-600">Syncing your interview details…</p>}
-      {(error || message) && <p className="text-sm text-red-600">{error ?? message}</p>}
+      {status === "connected" && (
+        <p className="rounded-xl bg-sage px-3 py-2 text-sm font-bold text-pine">
+          Connected — Hagal saves and ends automatically when it has the details.
+        </p>
+      )}
+      {syncing && <p className="text-sm font-bold text-muted-warm">Syncing your interview details…</p>}
+      {(error || message) && (
+        <p className="rounded-xl bg-apricot-soft px-3 py-2 text-sm font-bold text-terracotta-dark">
+          {error ?? message}
+        </p>
+      )}
     </div>
   );
 }
