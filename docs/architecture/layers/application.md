@@ -41,6 +41,9 @@ PR-B2 adds the intake flow: `src/app/intake/` contains port-only orchestration,
 while `src/app/composition/createIntakeDeps.ts` wires fake adapters for the
 temporary intake API routes at `src/app/api/intake/`.
 
+PR-B3 adds job-spec confirmation routes under `src/app/api/job-specs/` and a
+`CallOrchestrator` confirmation guard in `src/app/calls/callOrchestrator.ts`.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

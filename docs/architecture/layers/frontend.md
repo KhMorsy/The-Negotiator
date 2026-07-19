@@ -30,6 +30,9 @@ PR-B1 provides the shared `AppShell`, typed mock fixtures, and presentational
 screen components in `src/frontend/`. The corresponding App Router pages live
 under `src/app/(ui)/` and currently render those fixtures without API access.
 
+The confirmation screen posts to `/api/job-specs/[id]/confirm` and disables its
+CTA once the API returns a confirmed job spec.
+
 ## Testing rules
 
 - Component tests with Testing Library + Vitest where logic exists.
