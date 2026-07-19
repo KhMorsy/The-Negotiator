@@ -32,6 +32,13 @@ function buildContainer(): Container {
   const vendorDirectory = createFakeVendorDirectory();
   const telephony = selectTelephonyProvider(vendorDirectory);
   const speech = selectSpeechAgent();
+  const getAuditEvents = async (jobSpecId: string) => {
+    const calls = await app.repos.calls.listByJobSpec(jobSpecId);
+    const eventGroups = await Promise.all(
+      calls.map((call) => app.repos.audit.listByCall(call.id)),
+    );
+    return eventGroups.flat();
+  };
   const intakeOrchestrator = new IntakeOrchestrator({
     speechAgent: speech.agent,
     jobSpecRepo: app.repos.jobSpecs,
@@ -47,6 +54,7 @@ function buildContainer(): Container {
   });
   const reportComposer = new ReportComposer({
     quoteRepo: app.repos.quotes,
+    getAuditEvents,
     getJobSpec: (id) => app.repos.jobSpecs.getById(id),
     getVendors: async (jobSpecId) => {
       const jobSpec = await app.repos.jobSpecs.getById(jobSpecId);
@@ -69,13 +77,7 @@ function buildContainer(): Container {
     reportComposer,
     speechAgentKind: speech.kind,
     telephonyKind: telephony.kind,
-    async listAuditByJobSpec(jobSpecId) {
-      const calls = await app.repos.calls.listByJobSpec(jobSpecId);
-      const eventGroups = await Promise.all(
-        calls.map((call) => app.repos.audit.listByCall(call.id)),
-      );
-      return eventGroups.flat();
-    },
+    listAuditByJobSpec: getAuditEvents,
   };
 }
 
