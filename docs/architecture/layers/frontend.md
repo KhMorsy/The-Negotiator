@@ -26,6 +26,10 @@ Customer UI: intake (voice widget + uploads), job-spec confirmation, live call s
 | Live calls | `/calls/[jobId]` | Status via Realtime (T2) or polling (T1) |
 | Report | `/report/[jobId]` | A default; D/E/F expandable |
 
+PR-B1 provides the shared `AppShell`, typed mock fixtures, and presentational
+screen components in `src/frontend/`. The corresponding App Router pages live
+under `src/app/(ui)/` and currently render those fixtures without API access.
+
 ## Testing rules
 
 - Component tests with Testing Library + Vitest where logic exists.
