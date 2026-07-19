@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { createInMemoryAuditRepository } from "@/adapters/fake/inMemoryAuditRepository";
 import { createInMemoryQuoteRepository } from "@/adapters/fake/inMemoryQuoteRepository";
 import { ReportComposer } from "@/app/report/reportComposer";
+import {
+  createContainer,
+  resetContainerForTests,
+} from "@/app/composition/createContainer";
+import { GET } from "@/app/api/reports/[jobId]/route";
+import { buildJobSpec } from "@/domain/jobSpec/buildJobSpec";
 import type { JobSpec, Vendor } from "@/contracts";
 
 const jobSpec: JobSpec = {
@@ -95,5 +101,32 @@ describe("ReportComposer.composeDrilldowns", () => {
     );
     expect(drilldowns.redFlags?.some((redFlag) => redFlag.quoteId === quote.id)).toBe(false);
     expect(drilldowns.trust?.find((trust) => trust.vendorId === "vendor-a")?.score).toBeGreaterThan(50);
+  });
+});
+
+describe("GET /api/reports/[jobId]", () => {
+  it("includes drilldowns with the report JSON", async () => {
+    resetContainerForTests();
+    const container = createContainer();
+    const draft = buildJobSpec(
+      { sqft: 1800, bedrooms: 3, bathrooms: 2, pets: false },
+      {},
+      {
+        geo: "Austin, TX",
+        jobType: "recurring_weekly",
+        frequency: "weekly",
+      },
+    );
+    const job = await container.repos.jobSpecs.create(draft);
+    await container.repos.jobSpecs.confirm(job.id);
+    await container.callOrchestrator.runFullNegotiation(job.id);
+
+    const response = await GET(new Request(`http://localhost/api/reports/${job.id}`), {
+      params: Promise.resolve({ jobId: job.id }),
+    });
+    const body = (await response.json()) as { drilldowns?: unknown };
+
+    expect(response.status).toBe(200);
+    expect(body.drilldowns).toBeDefined();
   });
 });
