@@ -1,0 +1,3 @@
+export const MARKET_BENCHMARK_WEEKLY = 220;
+export const BELOW_MARKET_PERCENT = 30;
+export const HOURLY_MINIMUM_HOURS = 4;
