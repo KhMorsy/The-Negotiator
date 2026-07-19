@@ -1,4 +1,4 @@
-import type { JobSpec, JobSpecRepository } from "@/contracts";
+import type { JobSpecRepository } from "@/contracts";
 import type { SupabaseClient } from "./types";
 import { mapJobSpecRow } from "./types";
 
@@ -101,4 +101,3 @@ export function createSupabaseJobSpecRepository(
     },
   };
 }
-

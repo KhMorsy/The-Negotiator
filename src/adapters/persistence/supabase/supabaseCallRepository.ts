@@ -1,4 +1,4 @@
-import type { Call, CallRepository } from "@/contracts";
+import type { CallRepository } from "@/contracts";
 import type { SupabaseClient } from "./types";
 import { mapCallRow } from "./types";
 
@@ -74,4 +74,3 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
     },
   };
 }
-

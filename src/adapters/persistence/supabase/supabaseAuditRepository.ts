@@ -1,4 +1,4 @@
-import type { AuditEvent, AuditRepository } from "@/contracts";
+import type { AuditRepository } from "@/contracts";
 import type { SupabaseClient } from "./types";
 import { mapAuditRow } from "./types";
 
@@ -41,4 +41,3 @@ export function createSupabaseAuditRepository(
     },
   };
 }
-
