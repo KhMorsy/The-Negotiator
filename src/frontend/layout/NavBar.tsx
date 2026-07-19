@@ -8,8 +8,7 @@ export function NavBar() {
           The Negotiator
         </Link>
         <nav aria-label="Main" className="flex gap-4 text-sm">
-          <Link href="/intake/job-demo-001">Intake</Link>
-          <Link href="/report/job-demo-001">Report</Link>
+          <Link href="/">New quote</Link>
         </nav>
       </div>
     </header>

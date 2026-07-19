@@ -16,7 +16,8 @@ export interface Container extends AppContainer {
   listAuditByJobSpec(jobSpecId: string): ReturnType<Container["repos"]["audit"]["listByCall"]>;
 }
 
-let singleton: Container | undefined;
+// Stored on globalThis so in-memory state survives Next.js dev HMR module reloads.
+const globalStore = globalThis as { __negotiatorContainer?: Container };
 
 function buildContainer(): Container {
   const app = createTestContainer();
@@ -68,10 +69,10 @@ function buildContainer(): Container {
 }
 
 export function createContainer(): Container {
-  singleton ??= buildContainer();
-  return singleton;
+  globalStore.__negotiatorContainer ??= buildContainer();
+  return globalStore.__negotiatorContainer;
 }
 
 export function resetContainerForTests() {
-  singleton = undefined;
+  globalStore.__negotiatorContainer = undefined;
 }
