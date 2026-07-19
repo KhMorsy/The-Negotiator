@@ -29,6 +29,11 @@ function buildContainer(): Container {
   });
   const callOrchestrator = new CallOrchestrator({
     jobSpecRepo: app.repos.jobSpecs,
+    quoteRepo: app.repos.quotes,
+    auditRepo: app.repos.audit,
+    callRepo: app.repos.calls,
+    telephony,
+    vendorDirectory,
   });
   const reportComposer = new ReportComposer({
     quoteRepo: app.repos.quotes,
