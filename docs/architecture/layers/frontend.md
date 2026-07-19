@@ -23,7 +23,7 @@ Customer UI: intake (voice widget + uploads), job-spec confirmation, live call s
 | Home / start | `/` | Hero: busy dual-income family story hook |
 | Intake | `/intake/[jobId]` | Voice + document upload |
 | Confirm job spec | `/confirm/[jobId]` | Must confirm before calls |
-| Live calls | `/calls/[jobId]` | Status via Realtime (T2) or polling (T1) |
+| Live calls | `/calls/[jobId]` | Call rows via Supabase Realtime or polling fallback |
 | Report | `/report/[jobId]` | A default; D/E/F expandable |
 
 PR-B1 provides the shared `AppShell`, typed mock fixtures, and presentational
@@ -36,10 +36,16 @@ CTA once the API returns a confirmed job spec.
 The report screen fetches `/api/reports/[jobId]` when no initial report is
 supplied, with disabled D/E/F drill-down stubs until T2.
 
+PR-B6 replaces the fixture-based calls view with `LiveCallsScreen`. It uses
+`useCallStatusFeed` to fetch `/api/calls/[jobId]/status`, polling when fake
+Realtime is selected or Supabase browser credentials are unavailable, and
+subscribing to the `calls` table otherwise.
+
 ## Testing rules
 
 - Component tests with Testing Library + Vitest where logic exists.
 - Playwright e2e against simulated path (PR-I1+); no real phone calls in CI.
+- The T2 dashboard E2E verifies polling via `tests/e2e/t2-live-dashboard-polling.spec.ts`.
 - Accessibility: keyboard path for confirmation and report expanders.
 
 ## Definition of done

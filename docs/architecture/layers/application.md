@@ -33,6 +33,7 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 | Report Composer | `src/app/report/reportComposer.ts` |
 | API routes | `src/app/api/**` (Next.js App Router under `app/api` mapped to these services) |
 | Full negotiation API | `POST /api/calls/[jobId]/start` → `CallOrchestrator.runFullNegotiation` |
+| Call status API | `GET /api/calls/[jobId]/status` → persisted call rows |
 | Audit read API | `GET /api/audit/[jobId]` |
 
 > Note: Next.js physical routes live under `app/api/...`. Thin route files call into `src/app/**` services.
@@ -59,6 +60,9 @@ the ElevenLabs adapter only when the explicit env flag and credentials are set.
 
 PR-A7 applies the same composition-root selection pattern to telephony,
 retaining the simulated adapter unless explicit Twilio configuration is present.
+
+PR-B6 exposes persisted call rows through the call-status API for the live
+dashboard's polling fallback and Supabase Realtime feed.
 
 ## Testing rules
 
