@@ -1,4 +1,4 @@
-import { IntakeScreen } from "@/frontend/screens/IntakeScreen";
+import { LiveIntakeScreen } from "@/app/composition/LiveIntakeScreen";
 
 export default async function IntakePage({
   params,
@@ -9,5 +9,5 @@ export default async function IntakePage({
 }) {
   const { jobId } = await params;
   const { session } = await searchParams;
-  return <IntakeScreen jobId={jobId} sessionId={session} />;
+  return <LiveIntakeScreen jobId={jobId} sessionId={session} />;
 }

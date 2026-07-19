@@ -1,20 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
 import type { JobSpec } from "@/contracts";
-import { LiveVoiceInterview } from "@/frontend/components/LiveVoiceInterview";
 
 export function IntakeScreen({
   jobSpec: initialJobSpec,
   jobId,
   sessionId,
+  LiveVoiceInterviewComponent,
 }: {
   jobSpec?: JobSpec;
   jobId?: string;
   sessionId?: string;
+  LiveVoiceInterviewComponent?: ComponentType<{
+    jobSpecId: string;
+    onSynced: (jobSpec: JobSpec) => void;
+  }>;
 }) {
   const id = initialJobSpec?.id ?? jobId ?? "";
+  const LiveVoiceInterview = LiveVoiceInterviewComponent;
   const session = sessionId ?? `fake-session-${id}`;
   const [jobSpec, setJobSpec] = useState<JobSpec | null>(initialJobSpec ?? null);
   const [notFound, setNotFound] = useState(false);
@@ -125,7 +130,7 @@ export function IntakeScreen({
           </p>
         )}
       </div>
-      <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />
+      {LiveVoiceInterview && <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />}
       <div data-testid="intake-upload-quote">
         <label className="block text-sm font-medium">
           Upload existing quote (PDF/image) — optional leverage
