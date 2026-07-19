@@ -43,8 +43,15 @@ export function knowledgeBaseContract(
 
 import { createInMemoryKb } from "@/adapters/fake/inMemoryKb";
 import { loadHomeCleaningBenchmarks } from "@/adapters/kb/loadBenchmarkSnippets";
+import { createPgVectorKb } from "@/adapters/kb/pgVectorKb";
 
 knowledgeBaseContract("in-memory", () =>
   createInMemoryKb(loadHomeCleaningBenchmarks()),
 );
 
+knowledgeBaseContract("pgvector-stub-fallback", () =>
+  createPgVectorKb({
+    queryFn: async () => [],
+    fallbackSnippets: loadHomeCleaningBenchmarks(),
+  }),
+);

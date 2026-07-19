@@ -34,6 +34,13 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 - Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
 - Supabase schema doc: `supabase/migrations/001_init.sql`
 
+## Knowledge-base adapters
+
+- Seeded benchmarks: `config/kb/home_cleaning_benchmarks.json`
+- CI fake: `src/adapters/fake/inMemoryKb.ts`
+- Pgvector-shaped fallback adapter: `src/adapters/kb/pgVectorKb.ts`
+- Vector schema migration: `supabase/migrations/002_kb_vector.sql`
+
 ## Testing rules
 
 - Every adapter implements the matching `tests/contracts/ports/<port>.contract.test.ts` suite.
