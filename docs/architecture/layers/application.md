@@ -23,11 +23,13 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 | Module | Path |
 |--------|------|
 | Composition root | `src/app/composition/createContainer.ts` |
+| Test composition root | `src/app/composition/createTestContainer.ts` |
 | Intake Orchestrator | `src/app/intake/intakeOrchestrator.ts` |
 | Document Parser (app façade) | `src/app/intake/documentParserService.ts` |
 | Call Orchestrator | `src/app/calls/callOrchestrator.ts` |
 | Vendor Discovery service | `src/app/calls/vendorDiscovery.ts` |
-| Webhook handlers | `src/app/webhooks/elevenlabs.ts`, `twilio.ts` |
+| Webhook handlers | `src/app/webhooks/handleSkillToolCall.ts`, `handleTranscriptEvent.ts` |
+| ElevenLabs webhook route | `src/app/api/webhooks/elevenlabs/route.ts` |
 | Report Composer | `src/app/report/reportComposer.ts` |
 | API routes | `src/app/api/**` (Next.js App Router under `app/api` mapped to these services) |
 
