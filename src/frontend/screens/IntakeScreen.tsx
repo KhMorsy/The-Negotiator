@@ -110,6 +110,7 @@ export function IntakeScreen({
         <h1 className="font-display text-3xl text-pine">Tell Hagal about your home</h1>
         <p className="text-sm text-muted-warm">Job draft: {id}</p>
       </div>
+      {LiveVoiceInterview && <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />}
       <div
         data-testid="intake-voice-widget"
         className="space-y-3 rounded-2xl border-2 border-dashed border-apricot bg-apricot-soft/40 p-8 text-center"
@@ -134,7 +135,6 @@ export function IntakeScreen({
           </p>
         )}
       </div>
-      {LiveVoiceInterview && <LiveVoiceInterview jobSpecId={id} onSynced={setJobSpec} />}
       <div
         data-testid="intake-upload-quote"
         className="rounded-2xl border border-linen bg-white p-5"

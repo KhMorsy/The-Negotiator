@@ -49,9 +49,7 @@ function buildContainer(): Container {
   const telephony = selectTelephonyProvider(vendorDirectory);
   const speech = selectSpeechAgent();
   const kb = selectKnowledgeBase();
-  const skillRepo = createFileSkillRepository(
-    process.env.SKILL_GENERATED_DIR ?? "config/skills/generated",
-  );
+  const skillRepo = createFileSkillRepository(resolveGeneratedSkillDirectory());
   const getAuditEvents = async (jobSpecId: string) => {
     const calls = await app.repos.calls.listByJobSpec(jobSpecId);
     const eventGroups = await Promise.all(
@@ -111,6 +109,16 @@ function selectDocumentParser(): DocumentParser {
     return createOpenAiVisionAdapter({ apiKey });
   }
   return createFakeDocumentParser();
+}
+
+export function resolveGeneratedSkillDirectory(
+  env: { SKILL_GENERATED_DIR?: string; VERCEL?: string } = {
+    SKILL_GENERATED_DIR: process.env.SKILL_GENERATED_DIR,
+    VERCEL: process.env.VERCEL,
+  },
+): string {
+  return env.SKILL_GENERATED_DIR ??
+    (env.VERCEL ? "/tmp/the-negotiator-skills" : "config/skills/generated");
 }
 
 function selectKnowledgeBase(): {

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createContainer } from "@/app/composition/createContainer";
+import {
+  createContainer,
+  resolveGeneratedSkillDirectory,
+} from "@/app/composition/createContainer";
 
 describe("createContainer", () => {
   it("wires fake adapters without throwing", () => {
@@ -10,5 +13,10 @@ describe("createContainer", () => {
     expect(container.reportComposer).toBeDefined();
     expect(container.telephony).toBeDefined();
   });
-});
 
+  it("uses writable temporary storage for generated skills on Vercel", () => {
+    expect(resolveGeneratedSkillDirectory({ VERCEL: "1" })).toBe(
+      "/tmp/the-negotiator-skills",
+    );
+  });
+});

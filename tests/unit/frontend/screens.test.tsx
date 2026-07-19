@@ -12,7 +12,21 @@ import {
 
 describe("frontend screens", () => {
   it("IntakeScreen shows voice widget placeholder", () => {
-    render(<IntakeScreen jobSpec={mockJobSpec} />);
+    render(
+      <IntakeScreen
+        jobSpec={mockJobSpec}
+        LiveVoiceInterviewComponent={() => (
+          <div data-testid="live-voice-interview">Start voice interview</div>
+        )}
+      />,
+    );
+    const liveInterview = screen.getByTestId("live-voice-interview");
+    const simulatedFallback = screen.getByTestId("intake-voice-widget");
+
+    expect(liveInterview.compareDocumentPosition(simulatedFallback)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(liveInterview).toHaveTextContent("Start voice interview");
     expect(screen.getByTestId("intake-voice-widget")).toBeInTheDocument();
     expect(screen.getByTestId("intake-upload-quote")).toBeInTheDocument();
   });

@@ -46,8 +46,9 @@ savings, red flags, and trust signals returned by the reports API.
 
 The opt-in live intake pilot receives its voice-interview component from the
 composition root. Its `complete_intake` client-tool callback posts the
-validated fields to the intake API and refreshes the job draft; the simulated
-voice button remains a clearly labelled fallback for the CI/demo path.
+validated fields to the intake API and refreshes the job draft. The live
+interview appears before the clearly labelled simulated fallback used by CI and
+the demo path.
 
 ## Testing rules
 
