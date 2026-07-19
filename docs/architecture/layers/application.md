@@ -67,6 +67,10 @@ dashboard's polling fallback and Supabase Realtime feed.
 PR-B7 adds `ReportComposer.composeDrilldowns()`. The reports API returns the
 primary report with savings, red-flag, and trust drill-down data.
 
+PR-I2 adds the T2 simulated integration gate and judge runbook. The gate
+asserts adapter defaults and exercises intake, call status, audit, report, and
+drill-downs through one composition root.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).
