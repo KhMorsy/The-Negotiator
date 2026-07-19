@@ -27,6 +27,9 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
 
+PR-B2 adds deterministic fake speech and document-parser adapters for the
+simulated intake flow: `fakeSpeechAgent.ts` and `fakeDocumentParser.ts`.
+
 ## Repository adapters
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`

@@ -37,6 +37,10 @@ The repository uses the `src/app/` form of Next.js App Router. Customer pages
 are grouped under `src/app/(ui)/`; PR-B1 pages are presentation-only and import
 typed fixtures from `src/frontend/` until their application APIs land.
 
+PR-B2 adds the intake flow: `src/app/intake/` contains port-only orchestration,
+while `src/app/composition/createIntakeDeps.ts` wires fake adapters for the
+temporary intake API routes at `src/app/api/intake/`.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).
