@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TelephonyProvider } from "@/contracts";
 import { createSimulatedCallAdapter } from "@/adapters/fake/simulatedTelephony";
+import { createTwilioElevenLabsAdapter } from "@/adapters/telephony/twilioElevenLabs";
 
 export function runTelephonyProviderContract(
   label: string,
@@ -28,3 +29,12 @@ runTelephonyProviderContract("simulated", () => {
     endCall: adapter.endCall.bind(adapter),
   };
 });
+
+runTelephonyProviderContract("twilio-mocked", () =>
+  createTwilioElevenLabsAdapter({
+    twilio: { calls: { create: async () => ({ sid: "CA-contract" }) } },
+    resolveVendorPhone: async () => "+15125550101",
+    connectUrl: "https://api.elevenlabs.io/v1/convai/twilio/connect",
+    fromNumber: "+15125550000",
+  }),
+);
