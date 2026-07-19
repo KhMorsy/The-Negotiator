@@ -4,6 +4,8 @@ export interface BenchmarkSnippet {
   id: string;
   text: string;
   tags: string[];
+  sourceUrl?: string;
+  fetchedAt?: string;
 }
 
 export function loadHomeCleaningBenchmarks(): BenchmarkSnippet[] {
