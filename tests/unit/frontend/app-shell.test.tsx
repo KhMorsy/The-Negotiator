@@ -9,7 +9,7 @@ describe("AppShell", () => {
         <p>Child content</p>
       </AppShell>,
     );
-    expect(screen.getByRole("banner")).toHaveTextContent("The Negotiator");
+    expect(screen.getByRole("banner")).toHaveTextContent("Hagal");
     expect(screen.getByText("Child content")).toBeInTheDocument();
   });
 });
