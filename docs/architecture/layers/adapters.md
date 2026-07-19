@@ -27,12 +27,22 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
 
+PR-B2 adds deterministic fake speech and document-parser adapters for the
+simulated intake flow: `fakeSpeechAgent.ts` and `fakeDocumentParser.ts`.
+
 ## Repository adapters
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
 - Fake per-port repos: `src/adapters/fake/inMemory{JobSpec,Call,Quote,Audit}Repository.ts`
 - Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
 - Supabase schema doc: `supabase/migrations/001_init.sql`
+
+## Knowledge-base adapters
+
+- Seeded benchmarks: `config/kb/home_cleaning_benchmarks.json`
+- CI fake: `src/adapters/fake/inMemoryKb.ts`
+- Pgvector-shaped fallback adapter: `src/adapters/kb/pgVectorKb.ts`
+- Vector schema migration: `supabase/migrations/002_kb_vector.sql`
 
 ## Testing rules
 

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "bench-deep-clean-sqft",
+    "text": "Oakland deep clean market range: $0.18–$0.28 per sqft for 1000–1500 sqft homes.",
+    "tags": ["deep_clean", "sqft", "oakland", "benchmark"]
+  },
+  {
+    "id": "bench-trip-fee",
+    "text": "Typical trip or travel fees for Bay Area home cleaning: $25–$45; often waivable on recurring plans.",
+    "tags": ["trip fee", "travel", "fee", "benchmark"]
+  },
+  {
+    "id": "bench-first-clean",
+    "text": "First-clean or initial deep premiums commonly run 15–30% above recurring visit pricing.",
+    "tags": ["first clean", "premium", "benchmark"]
+  },
+  {
+    "id": "bench-recurring-weekly",
+    "text": "Weekly recurring cleans for 2BR/2BA ~1200 sqft often land $140–$190 all-in in the Bay Area.",
+    "tags": ["recurring", "weekly", "benchmark"]
+  },
+  {
+    "id": "bench-red-flag-lowball",
+    "text": "Quotes more than 30% below local benchmark for the same scope are a red-flag signal.",
+    "tags": ["red flag", "below market", "benchmark"]
+  },
+  {
+    "id": "bench-supplies-fee",
+    "text": "Separate supplies fees of $15–$35 are common; many vendors bundle supplies for recurring clients.",
+    "tags": ["supplies", "fee", "benchmark"]
+  },
+  {
+    "id": "bench-hourly-minimum",
+    "text": "Hourly models often use a 3-hour minimum; all-in totals should include minimum hours plus fees.",
+    "tags": ["hourly", "minimum hours", "pricing model"]
+  }
+]

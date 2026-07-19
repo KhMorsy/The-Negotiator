@@ -23,11 +23,13 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 | Module | Path |
 |--------|------|
 | Composition root | `src/app/composition/createContainer.ts` |
+| Test composition root | `src/app/composition/createTestContainer.ts` |
 | Intake Orchestrator | `src/app/intake/intakeOrchestrator.ts` |
 | Document Parser (app façade) | `src/app/intake/documentParserService.ts` |
 | Call Orchestrator | `src/app/calls/callOrchestrator.ts` |
 | Vendor Discovery service | `src/app/calls/vendorDiscovery.ts` |
-| Webhook handlers | `src/app/webhooks/elevenlabs.ts`, `twilio.ts` |
+| Webhook handlers | `src/app/webhooks/handleSkillToolCall.ts`, `handleTranscriptEvent.ts` |
+| ElevenLabs webhook route | `src/app/api/webhooks/elevenlabs/route.ts` |
 | Report Composer | `src/app/report/reportComposer.ts` |
 | API routes | `src/app/api/**` (Next.js App Router under `app/api` mapped to these services) |
 
@@ -36,6 +38,13 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 The repository uses the `src/app/` form of Next.js App Router. Customer pages
 are grouped under `src/app/(ui)/`; PR-B1 pages are presentation-only and import
 typed fixtures from `src/frontend/` until their application APIs land.
+
+PR-B2 adds the intake flow: `src/app/intake/` contains port-only orchestration,
+while `src/app/composition/createIntakeDeps.ts` wires fake adapters for the
+temporary intake API routes at `src/app/api/intake/`.
+
+PR-B3 adds job-spec confirmation routes under `src/app/api/job-specs/` and a
+`CallOrchestrator` confirmation guard in `src/app/calls/callOrchestrator.ts`.
 
 ## Testing rules
 
