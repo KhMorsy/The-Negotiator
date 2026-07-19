@@ -1,4 +1,5 @@
 import { createFakeDocumentParser } from "@/adapters/fake/fakeDocumentParser";
+import { createFileSkillRepository } from "@/adapters/persistence/fileSkillRepository";
 import { createOpenAiVisionAdapter } from "@/adapters/llm/openAiVisionAdapter";
 import { createFakeSpeechAgent } from "@/adapters/fake/fakeSpeechAgent";
 import { createFakeVendorDirectory } from "@/adapters/fake/fakeVendorDirectory";
@@ -20,6 +21,7 @@ import { ReportComposer } from "@/app/report/reportComposer";
 import type {
   DocumentParser,
   KnowledgeBase,
+  SkillRepository,
   SpeechAgent,
   TelephonyProvider,
   VendorDirectory,
@@ -34,6 +36,7 @@ export interface Container extends AppContainer {
   speechAgentKind: "fake" | "elevenlabs";
   telephonyKind: "simulated" | "twilio";
   kbProviderKind: "snippets" | "tavily";
+  skillRepo: SkillRepository;
   listAuditByJobSpec(jobSpecId: string): ReturnType<Container["repos"]["audit"]["listByCall"]>;
 }
 
@@ -46,6 +49,9 @@ function buildContainer(): Container {
   const telephony = selectTelephonyProvider(vendorDirectory);
   const speech = selectSpeechAgent();
   const kb = selectKnowledgeBase();
+  const skillRepo = createFileSkillRepository(
+    process.env.SKILL_GENERATED_DIR ?? "config/skills/generated",
+  );
   const getAuditEvents = async (jobSpecId: string) => {
     const calls = await app.repos.calls.listByJobSpec(jobSpecId);
     const eventGroups = await Promise.all(
@@ -93,6 +99,7 @@ function buildContainer(): Container {
     speechAgentKind: speech.kind,
     telephonyKind: telephony.kind,
     kbProviderKind: kb.kind,
+    skillRepo,
     listAuditByJobSpec: getAuditEvents,
   };
 }
