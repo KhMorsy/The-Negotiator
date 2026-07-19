@@ -4,6 +4,19 @@
 **Owner lanes:** Both (changes require coordination; prefer PR-01 style contract PRs)
 **Parent architecture:** [2026-07-18-the-negotiator-architecture.md](../../specs/2026-07-18-the-negotiator-architecture.md) §8
 
+## Status
+
+**PR-01 landed** (`CONTRACTS_VERSION === "0.1.0"`).
+
+Key files:
+- `src/contracts/index.ts`
+- `src/contracts/types/*`
+- `src/contracts/schemas/*`
+- `src/contracts/ports/*`
+- `src/contracts/config/vertical.ts`
+- `config/verticals/home_cleaning.json`
+- `tests/unit/contracts/*`
+
 ## Responsibility
 
 Owns the **shared language** of the system: TypeScript types, Zod schemas, port interfaces, and vertical config shapes. Every other layer imports from here. Nothing in `contracts` imports from `domain`, `app`, `adapters`, or `frontend`.
