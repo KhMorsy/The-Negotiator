@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { JobSpec } from "@/contracts";
+import { JourneyStepper } from "@/frontend/components/JourneyStepper";
 
 export function IntakeScreen({
   jobSpec: initialJobSpec,
@@ -84,11 +85,11 @@ export function IntakeScreen({
   if (notFound) {
     return (
       <section className="space-y-4" data-testid="intake-screen">
-        <h1 className="text-2xl font-semibold">Job not found</h1>
-        <p className="text-gray-600">
+        <h1 className="font-display text-3xl text-pine">Job not found</h1>
+        <p className="text-muted-warm">
           This job doesn&apos;t exist (the in-memory store resets when the server
           restarts).{" "}
-          <Link href="/" className="underline">
+          <Link href="/" className="font-bold text-terracotta underline">
             Start a new quote from the home page.
           </Link>
         </p>
@@ -97,14 +98,17 @@ export function IntakeScreen({
   }
 
   return (
-    <section className="space-y-6" data-testid="intake-screen">
-      <h1 className="text-2xl font-semibold">Tell us about your home</h1>
-      <p className="text-gray-600">Job draft: {id}</p>
+    <section className="space-y-8" data-testid="intake-screen">
+      <JourneyStepper current="intake" />
+      <div className="space-y-1">
+        <h1 className="font-display text-3xl text-pine">Tell Hagal about your home</h1>
+        <p className="text-sm text-muted-warm">Job draft: {id}</p>
+      </div>
       <div
         data-testid="intake-voice-widget"
-        className="space-y-3 rounded-lg border border-dashed border-gray-300 p-8 text-center"
+        className="space-y-3 rounded-2xl border-2 border-dashed border-apricot bg-apricot-soft/40 p-8 text-center"
       >
-        <p className="text-gray-600">
+        <p className="text-muted-warm">
           Voice interview (ElevenLabs when live keys are set; simulated otherwise)
         </p>
         <button
@@ -112,20 +116,23 @@ export function IntakeScreen({
           data-testid="intake-voice-sync-button"
           onClick={handleVoiceSync}
           disabled={busy || voiceSynced}
-          className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
+          className="rounded-full bg-pine px-5 py-2.5 font-bold text-white hover:bg-pine/90 disabled:opacity-50"
         >
           {voiceSynced ? "Interview synced" : "Run simulated voice interview"}
         </button>
         {voiceSynced && jobSpec && (
-          <p className="text-sm text-green-700">
+          <p className="text-sm font-bold text-pine">
             Captured: {jobSpec.sqft} sqft · {jobSpec.bedrooms} bed /{" "}
             {jobSpec.bathrooms} bath · {jobSpec.frequency}
             {jobSpec.pets ? " · pets" : ""}
           </p>
         )}
       </div>
-      <div data-testid="intake-upload-quote">
-        <label className="block text-sm font-medium">
+      <div
+        data-testid="intake-upload-quote"
+        className="rounded-2xl border border-linen bg-white p-5"
+      >
+        <label className="block font-extrabold text-ink">
           Upload existing quote (PDF/image) — optional leverage
         </label>
         <input
@@ -139,13 +146,13 @@ export function IntakeScreen({
           }}
         />
         {uploadedAmount !== null && (
-          <p className="mt-2 text-sm text-green-700">
+          <p className="mt-2 text-sm font-bold text-pine">
             Leverage quote captured: ${uploadedAmount}
           </p>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium">
+      <div className="rounded-2xl border border-linen bg-white p-5">
+        <label className="block font-extrabold text-ink">
           Upload room photos — optional vision estimate
         </label>
         <input
@@ -161,7 +168,7 @@ export function IntakeScreen({
           }}
         />
         {photosMerged && jobSpec && (
-          <p className="mt-2 text-sm text-green-700" data-testid="intake-photos-result">
+          <p className="mt-2 text-sm font-bold text-pine" data-testid="intake-photos-result">
             From photos: {jobSpec.sqft} sqft · {jobSpec.bedrooms} bed /{" "}
             {jobSpec.bathrooms} bath
             {jobSpec.conditionNotes ? ` — ${jobSpec.conditionNotes}` : ""}
@@ -171,9 +178,9 @@ export function IntakeScreen({
       <Link
         href={`/confirm/${id}`}
         data-testid="intake-continue-link"
-        className="inline-flex rounded-lg bg-black px-5 py-3 text-white hover:bg-gray-800"
+        className="inline-flex rounded-full bg-terracotta px-6 py-3 font-extrabold text-white hover:bg-terracotta-dark"
       >
-        Continue to confirm
+        Continue — Hagal reads it back →
       </Link>
     </section>
   );
