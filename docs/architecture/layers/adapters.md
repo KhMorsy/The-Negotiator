@@ -22,7 +22,7 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 |------|--------------|---------------------|
 | `TelephonyProvider` | `src/adapters/telephony/twilioElevenLabs.ts` | `src/adapters/fake/simulatedTelephony.ts` |
 | `SpeechAgent` | `src/adapters/speech/elevenLabsAgent.ts` | `src/adapters/fake/fakeSpeechAgent.ts` |
-| `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiAdapter.ts` | `src/adapters/fake/fakeLlm.ts` |
+| `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiAdapter.ts` | `src/adapters/fake/fakeLlmParser.ts` |
 | `KnowledgeBase` | `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
