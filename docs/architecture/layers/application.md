@@ -88,3 +88,5 @@ drill-downs through one composition root.
 
 
 PR-B8 adds `IntakeOrchestrator.mergeRoomPhotos` and `POST /api/intake/upload-photos` to merge vision-estimated JobSpec fields into the draft.
+
+PR-A9 adds `src/app/calls/emailFallbackHandler.ts`; transcript webhooks route refusals to email and set `callback_commitment` without crashing.

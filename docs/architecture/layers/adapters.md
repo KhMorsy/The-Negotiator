@@ -24,6 +24,7 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 | `SpeechAgent` | `src/adapters/speech/elevenLabsAgent.ts` | `src/adapters/fake/fakeSpeechAgent.ts` |
 | `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiVisionAdapter.ts` (`parseRoomPhotos`) | `src/adapters/fake/fakeDocumentParser.ts`, `fakeLlmParser.ts` |
 | `KnowledgeBase` | `src/adapters/kb/tavilyKb.ts` (live), `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
+| `EmailNotifier` | `src/adapters/email/resendEmailNotifier.ts` | `src/adapters/fake/fakeEmailNotifier.ts` |
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
 | `AuditRepository` (fake) | — | `src/adapters/fake/inMemoryAuditRepository.ts` |
@@ -41,6 +42,8 @@ keeps simulated telephony by default and selects Twilio only when
 `USE_SIMULATED_TELEPHONY=false` with the required Twilio and ElevenLabs values.
 
 PR-B8 adds `parseRoomPhotos` on `DocumentParser` via `openAiVisionAdapter.ts`; CI keeps `createFakeDocumentParser()`. Live vision activates when `USE_FAKE_DOCUMENT_PARSER=false` and `OPENAI_API_KEY` are set.
+
+PR-A9 adds email fallback via `EmailNotifier` and `handleEmailFallback` when vendors refuse phone quotes.
 
 PR-A10 adds `createTavilyKb` behind `KnowledgeBase`. The composition root
 selects it when `KB_PROVIDER=tavily` and `TAVILY_API_KEY` are set; otherwise

@@ -42,6 +42,7 @@ Owns the **shared language** of the system: TypeScript types, Zod schemas, port 
 | `src/contracts/types/report.ts` | `ReportPrimary`, `ReportDrilldowns` |
 | `src/contracts/schemas/*.ts` | Zod mirrors of the types above |
 | `src/contracts/ports/*.ts` | Port interfaces (DIP seam) |
+| `src/contracts/ports/email-notifier.ts` | `EmailNotifier` (PR-A9) |
 | `src/contracts/config/vertical.ts` | Vertical config schema |
 | `config/verticals/home_cleaning.json` | Seeded home-cleaning vertical |
 

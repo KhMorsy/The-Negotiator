@@ -51,3 +51,6 @@ Pure business logic that wins the challenge: honesty gate, skill filtering, quot
 - [ ] Unit tests green for every pure function
 - [ ] Honesty gate negative tests present
 - [ ] This doc updated when modules are added/renamed
+
+
+PR-A9 adds `src/domain/calls/detectQuoteRefusal.ts` — pure utterance matching for phone-quote refusals.
