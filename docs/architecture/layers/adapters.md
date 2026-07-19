@@ -20,12 +20,14 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 
 | Port | Real adapter | Fake / demo adapter |
 |------|--------------|---------------------|
-| `TelephonyProvider` | `src/adapters/telephony/twilioElevenLabs.ts` | `src/adapters/fake/simulatedTelephony.ts` |
+| `TelephonyProvider` | `src/adapters/telephony/twilioElevenLabs.ts` | `src/adapters/fake/simulatedTelephony.ts` — personas: `vendor-tough`, `vendor-lowball`, `vendor-upseller` |
 | `SpeechAgent` | `src/adapters/speech/elevenLabsAgent.ts` | `src/adapters/fake/fakeSpeechAgent.ts` |
 | `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiAdapter.ts` | `src/adapters/fake/fakeLlmParser.ts` |
 | `KnowledgeBase` | `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
+| `AuditRepository` (fake) | — | `src/adapters/fake/inMemoryAuditRepository.ts` |
+| `CallRepository` (fake) | — | `src/adapters/fake/inMemoryCallRepository.ts` |
 
 PR-B2 adds deterministic fake speech and document-parser adapters for the
 simulated intake flow: `fakeSpeechAgent.ts` and `fakeDocumentParser.ts`.

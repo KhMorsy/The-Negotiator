@@ -22,7 +22,7 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 
 | Module | Path |
 |--------|------|
-| Composition root | `src/app/composition/createContainer.ts` |
+| T1 composition root | `src/app/composition/createContainer.ts` |
 | Test composition root | `src/app/composition/createTestContainer.ts` |
 | Intake Orchestrator | `src/app/intake/intakeOrchestrator.ts` |
 | Document Parser (app façade) | `src/app/intake/documentParserService.ts` |
@@ -32,6 +32,8 @@ Orchestrates use cases: intake flow, call orchestration, webhook event routing, 
 | ElevenLabs webhook route | `src/app/api/webhooks/elevenlabs/route.ts` |
 | Report Composer | `src/app/report/reportComposer.ts` |
 | API routes | `src/app/api/**` (Next.js App Router under `app/api` mapped to these services) |
+| Full negotiation API | `POST /api/calls/[jobId]/start` → `CallOrchestrator.runFullNegotiation` |
+| Audit read API | `GET /api/audit/[jobId]` |
 
 > Note: Next.js physical routes live under `app/api/...`. Thin route files call into `src/app/**` services.
 
@@ -49,11 +51,16 @@ PR-B3 adds job-spec confirmation routes under `src/app/api/job-specs/` and a
 PR-B5 adds `src/app/report/reportComposer.ts` and its composed report API at
 `src/app/api/reports/[jobId]/route.ts`; fake demo wiring remains in composition.
 
+T1 uses the shared composition root for the intake, confirmation, negotiation,
+audit, and report routes so the simulated flow shares one in-memory state.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).
 - Webhook tests POST signed/unsigned fixtures and assert domain side effects (quote rows, audit events).
 - No live OpenAI/Twilio/ElevenLabs calls in CI.
+- T1 gate integration test: `tests/integration/t1/twoRoundFlow.test.ts`.
+- T1 gate e2e: `tests/e2e/t1-happy-path.spec.ts`.
 
 ## Definition of done
 
