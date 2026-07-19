@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getIntakeOrchestrator } from "@/app/composition/createIntakeDeps";
+import { createContainer } from "@/app/composition/createContainer";
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!(file instanceof Blob)) {
     return NextResponse.json({ error: "file required" }, { status: 400 });
   }
-  const jobSpec = await getIntakeOrchestrator().applyQuoteDocument(
+  const jobSpec = await createContainer().intakeOrchestrator.applyQuoteDocument(
     jobSpecId,
     new Uint8Array(await file.arrayBuffer()),
     file.type || "application/octet-stream",

@@ -1,12 +1,10 @@
-import { createInMemoryJobSpecRepository } from "@/adapters/fake/inMemoryRepos";
-
-let repository = createInMemoryJobSpecRepository();
+import { createContainer, resetContainerForTests } from "./createContainer";
 
 export function getJobSpecRepository() {
-  return repository;
+  return createContainer().repos.jobSpecs;
 }
 
 export function resetJobSpecRepositoryForTests() {
-  repository = createInMemoryJobSpecRepository();
-  return repository;
+  resetContainerForTests();
+  return createContainer().repos.jobSpecs;
 }
