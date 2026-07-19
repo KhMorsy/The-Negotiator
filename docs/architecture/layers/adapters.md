@@ -27,6 +27,13 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
 
+## Repository adapters
+
+- Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
+- Fake per-port repos: `src/adapters/fake/inMemory{JobSpec,Call,Quote,Audit}Repository.ts`
+- Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
+- Supabase schema doc: `supabase/migrations/001_init.sql`
+
 ## Testing rules
 
 - Every adapter implements the matching `tests/contracts/ports/<port>.contract.test.ts` suite.
