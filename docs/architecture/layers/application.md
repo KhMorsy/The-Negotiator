@@ -46,6 +46,9 @@ temporary intake API routes at `src/app/api/intake/`.
 PR-B3 adds job-spec confirmation routes under `src/app/api/job-specs/` and a
 `CallOrchestrator` confirmation guard in `src/app/calls/callOrchestrator.ts`.
 
+PR-B5 adds `src/app/report/reportComposer.ts` and its composed report API at
+`src/app/api/reports/[jobId]/route.ts`; fake demo wiring remains in composition.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

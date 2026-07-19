@@ -33,6 +33,9 @@ under `src/app/(ui)/` and currently render those fixtures without API access.
 The confirmation screen posts to `/api/job-specs/[id]/confirm` and disables its
 CTA once the API returns a confirmed job spec.
 
+The report screen fetches `/api/reports/[jobId]` when no initial report is
+supplied, with disabled D/E/F drill-down stubs until T2.
+
 ## Testing rules
 
 - Component tests with Testing Library + Vitest where logic exists.
