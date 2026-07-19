@@ -71,6 +71,11 @@ PR-I2 adds the T2 simulated integration gate and judge runbook. The gate
 asserts adapter defaults and exercises intake, call status, audit, report, and
 drill-downs through one composition root.
 
+For serverless demo deployments, the composition root stores generated skills
+under `/tmp/the-negotiator-skills` unless `SKILL_GENERATED_DIR` is set. This
+avoids writing to Vercel's read-only deployment filesystem; generated skills
+remain ephemeral in this mode.
+
 The opt-in live intake pilot registers an ElevenLabs `complete_intake` client
 tool in the browser. When the agent calls it, `POST /api/intake/[jobSpecId]/complete-live`
 validates the supplied interview fields and updates the unconfirmed job draft
