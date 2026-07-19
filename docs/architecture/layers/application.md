@@ -90,3 +90,6 @@ drill-downs through one composition root.
 PR-B8 adds `IntakeOrchestrator.mergeRoomPhotos` and `POST /api/intake/upload-photos` to merge vision-estimated JobSpec fields into the draft.
 
 PR-A9 adds `src/app/calls/emailFallbackHandler.ts`; transcript webhooks route refusals to email and set `callback_commitment` without crashing.
+
+
+PR-I3 adds assisted-call co-pilot stub (`src/app/copilot/assistedCallCopilot.ts`, `POST /api/copilot/session`) behind `FEATURE_ASSISTED_CALL_COPILOT`, plus T3 gate tests covering skill generation, room photos, email fallback, and co-pilot.
