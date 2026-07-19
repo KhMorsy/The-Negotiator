@@ -68,5 +68,39 @@ describe("POST /api/webhooks/elevenlabs", () => {
     const json = await response.json();
     expect(json.quote.normalizedTotal).toBe(235);
   });
-});
 
+  it("skill tool then transcript on same call persists audit and quote", async () => {
+    const skillResponse = await POST(
+      makeRequest({
+        type: "skill_tool_call",
+        callId: "call-flow-1",
+        jobSpec,
+        quotesInHand: [],
+        lastVendorUtterance: "Total is $280 with trip fee",
+        priceBefore: 280,
+      }),
+    );
+    expect(skillResponse.status).toBe(200);
+
+    const quoteResponse = await POST(
+      makeRequest({
+        type: "transcript_complete",
+        callId: "call-flow-1",
+        jobSpec,
+        vendorId: "vendor-1",
+        round: 1,
+        transcript: {
+          turns: [
+            {
+              role: "vendor",
+              text: "We charge $200 base plus a $35 trip fee.",
+            },
+          ],
+        },
+      }),
+    );
+    expect(quoteResponse.status).toBe(200);
+    const quoteJson = await quoteResponse.json();
+    expect(quoteJson.quote.normalizedTotal).toBe(235);
+  });
+});
