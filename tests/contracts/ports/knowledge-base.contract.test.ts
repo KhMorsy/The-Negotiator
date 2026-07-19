@@ -44,6 +44,7 @@ export function knowledgeBaseContract(
 import { createInMemoryKb } from "@/adapters/fake/inMemoryKb";
 import { loadHomeCleaningBenchmarks } from "@/adapters/kb/loadBenchmarkSnippets";
 import { createPgVectorKb } from "@/adapters/kb/pgVectorKb";
+import { createTavilyKb } from "@/adapters/kb/tavilyKb";
 
 knowledgeBaseContract("in-memory", () =>
   createInMemoryKb(loadHomeCleaningBenchmarks()),
@@ -53,5 +54,33 @@ knowledgeBaseContract("pgvector-stub-fallback", () =>
   createPgVectorKb({
     queryFn: async () => [],
     fallbackSnippets: loadHomeCleaningBenchmarks(),
+  }),
+);
+
+knowledgeBaseContract("tavily-fake-fetch", () =>
+  createTavilyKb({
+    searchFn: async ({ query }) => {
+      if (query.includes("xyzzy_plugh_no_match_token")) {
+        return [];
+      }
+      return [
+        {
+          url: "https://example.com/trip-fee",
+          content: "Typical trip fee Oakland deep clean is $30–$45.",
+          score: 0.95,
+        },
+        {
+          url: "https://example.com/deep-clean",
+          content: "Oakland deep clean market rates vary by sqft.",
+          score: 0.8,
+        },
+        {
+          url: "https://example.com/fees",
+          content: "Travel and trip fees are often waivable on recurring plans.",
+          score: 0.7,
+        },
+      ];
+    },
+    fallback: createInMemoryKb(loadHomeCleaningBenchmarks()),
   }),
 );

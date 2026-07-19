@@ -23,7 +23,7 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 | `TelephonyProvider` | `src/adapters/telephony/twilioElevenLabs.ts` | `src/adapters/fake/simulatedTelephony.ts` — personas: `vendor-tough`, `vendor-lowball`, `vendor-upseller` |
 | `SpeechAgent` | `src/adapters/speech/elevenLabsAgent.ts` | `src/adapters/fake/fakeSpeechAgent.ts` |
 | `LLMPlanner` / `LLMParser` / `DocumentParser` | `src/adapters/llm/openAiAdapter.ts` | `src/adapters/fake/fakeLlmParser.ts` |
-| `KnowledgeBase` | `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
+| `KnowledgeBase` | `src/adapters/kb/tavilyKb.ts` (live), `src/adapters/kb/pgVectorKb.ts` | `src/adapters/fake/inMemoryKb.ts` |
 | `VendorDirectory` | `src/adapters/vendors/placesYelp.ts` | `src/adapters/fake/fakeVendorDirectory.ts` |
 | Repositories | `src/adapters/persistence/supabase/*.ts` | `src/adapters/fake/inMemoryRepos.ts` |
 | `AuditRepository` (fake) | — | `src/adapters/fake/inMemoryAuditRepository.ts` |
@@ -40,6 +40,11 @@ PR-A7 adds a Twilio adapter behind `TelephonyProvider`; the composition root
 keeps simulated telephony by default and selects Twilio only when
 `USE_SIMULATED_TELEPHONY=false` with the required Twilio and ElevenLabs values.
 
+PR-A10 adds `createTavilyKb` behind `KnowledgeBase`. The composition root
+selects it when `KB_PROVIDER=tavily` and `TAVILY_API_KEY` are set; otherwise
+it keeps the snippet-backed in-memory KB. Live Tavily results fall back to
+snippets on empty responses or search errors.
+
 ## Repository adapters
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
@@ -51,7 +56,8 @@ keeps simulated telephony by default and selects Twilio only when
 ## Knowledge-base adapters
 
 - Seeded benchmarks: `config/kb/home_cleaning_benchmarks.json`
-- CI fake: `src/adapters/fake/inMemoryKb.ts`
+- CI fake / snippet default: `src/adapters/fake/inMemoryKb.ts`
+- Live web-search adapter: `src/adapters/kb/tavilyKb.ts` (`KB_PROVIDER=tavily`)
 - Pgvector-shaped fallback adapter: `src/adapters/kb/pgVectorKb.ts`
 - Vector schema migration: `supabase/migrations/002_kb_vector.sql`
 

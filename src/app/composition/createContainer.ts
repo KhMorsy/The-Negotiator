@@ -1,7 +1,12 @@
 import { createFakeDocumentParser } from "@/adapters/fake/fakeDocumentParser";
 import { createFakeSpeechAgent } from "@/adapters/fake/fakeSpeechAgent";
 import { createFakeVendorDirectory } from "@/adapters/fake/fakeVendorDirectory";
+import { createInMemoryKb } from "@/adapters/fake/inMemoryKb";
 import { createSimulatedCallAdapter } from "@/adapters/fake/simulatedTelephony";
+import {
+  createDefaultTavilySearchFn,
+  createTavilyKb,
+} from "@/adapters/kb/tavilyKb";
 import { createElevenLabsAgentAdapter } from "@/adapters/speech/elevenLabsAgent";
 import {
   createTwilioElevenLabsAdapter,
@@ -11,7 +16,12 @@ import { CallOrchestrator } from "@/app/calls/callOrchestrator";
 import { DocumentParserService } from "@/app/intake/documentParserService";
 import { IntakeOrchestrator } from "@/app/intake/intakeOrchestrator";
 import { ReportComposer } from "@/app/report/reportComposer";
-import type { SpeechAgent, TelephonyProvider, VendorDirectory } from "@/contracts";
+import type {
+  KnowledgeBase,
+  SpeechAgent,
+  TelephonyProvider,
+  VendorDirectory,
+} from "@/contracts";
 import { createTestContainer, type AppContainer } from "./createTestContainer";
 
 export interface Container extends AppContainer {
@@ -21,6 +31,7 @@ export interface Container extends AppContainer {
   reportComposer: ReportComposer;
   speechAgentKind: "fake" | "elevenlabs";
   telephonyKind: "simulated" | "twilio";
+  kbProviderKind: "snippets" | "tavily";
   listAuditByJobSpec(jobSpecId: string): ReturnType<Container["repos"]["audit"]["listByCall"]>;
 }
 
@@ -32,6 +43,7 @@ function buildContainer(): Container {
   const vendorDirectory = createFakeVendorDirectory();
   const telephony = selectTelephonyProvider(vendorDirectory);
   const speech = selectSpeechAgent();
+  const kb = selectKnowledgeBase();
   const getAuditEvents = async (jobSpecId: string) => {
     const calls = await app.repos.calls.listByJobSpec(jobSpecId);
     const eventGroups = await Promise.all(
@@ -71,35 +83,62 @@ function buildContainer(): Container {
 
   return {
     ...app,
+    kb: kb.kb,
     telephony: telephony.provider,
     intakeOrchestrator,
     callOrchestrator,
     reportComposer,
     speechAgentKind: speech.kind,
     telephonyKind: telephony.kind,
+    kbProviderKind: kb.kind,
     listAuditByJobSpec: getAuditEvents,
   };
+}
+
+function selectKnowledgeBase(): {
+  kb: KnowledgeBase;
+  kind: "snippets" | "tavily";
+} {
+  const snippets = createInMemoryKb();
+  const wantTavily =
+    process.env.KB_PROVIDER === "tavily" && Boolean(process.env.TAVILY_API_KEY);
+
+  if (!wantTavily) {
+    return { kb: snippets, kind: "snippets" };
+  }
+
+  try {
+    return {
+      kb: createTavilyKb({
+        searchFn: createDefaultTavilySearchFn(),
+        fallback: snippets,
+      }),
+      kind: "tavily",
+    };
+  } catch {
+    return { kb: snippets, kind: "snippets" };
+  }
 }
 
 function selectTelephonyProvider(vendorDirectory: VendorDirectory): {
   provider: TelephonyProvider;
   kind: "simulated" | "twilio";
 } {
-  if (process.env.USE_SIMULATED_TELEPHONY !== "false") {
-    return { provider: createSimulatedCallAdapter(), kind: "simulated" };
-  }
-
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const fromNumber = process.env.TWILIO_FROM_NUMBER;
   const connectUrl = process.env.ELEVENLABS_TWILIO_CONNECT_URL;
-  if (!accountSid || !authToken || !fromNumber || !connectUrl) {
-    throw new Error("Twilio credentials and ELEVENLABS_TWILIO_CONNECT_URL required");
+  const wantLive =
+    process.env.USE_SIMULATED_TELEPHONY === "false" &&
+    Boolean(accountSid && authToken && fromNumber && connectUrl);
+
+  if (!wantLive) {
+    return { provider: createSimulatedCallAdapter(), kind: "simulated" };
   }
 
   return {
     provider: createTwilioElevenLabsAdapter({
-      twilio: createTwilioHttpClient(accountSid, authToken),
+      twilio: createTwilioHttpClient(accountSid!, authToken!),
       resolveVendorPhone: async (vendorId) => {
         const vendors = await vendorDirectory.findVendors({
           geo: "",
@@ -112,8 +151,8 @@ function selectTelephonyProvider(vendorDirectory: VendorDirectory): {
         }
         return vendor.phone;
       },
-      connectUrl,
-      fromNumber,
+      connectUrl: connectUrl!,
+      fromNumber: fromNumber!,
     }),
     kind: "twilio",
   };

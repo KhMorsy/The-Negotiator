@@ -12,5 +12,23 @@ describe("loadHomeCleaningBenchmarks", () => {
       tags: expect.any(Array),
     });
   });
+
+  it("accepts optional provenance fields when present", () => {
+    const withProvenance = [
+      ...loadHomeCleaningBenchmarks(),
+      {
+        id: "bench-with-source",
+        text: "Cited benchmark text.",
+        tags: ["benchmark"],
+        sourceUrl: "https://example.com/source",
+        fetchedAt: "2026-07-19T00:00:00.000Z",
+      },
+    ];
+
+    expect(withProvenance.at(-1)).toMatchObject({
+      sourceUrl: "https://example.com/source",
+      fetchedAt: "2026-07-19T00:00:00.000Z",
+    });
+  });
 });
 
