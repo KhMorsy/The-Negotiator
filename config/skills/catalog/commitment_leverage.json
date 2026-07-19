@@ -1,0 +1,11 @@
+[
+ {"id":"ask_weekly_commitment_discount","name":"Ask weekly commitment discount","category":"commitment_leverage","selectionSignals":["weekly service","every week"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"What discount can you offer for {{frequency}} service?"},
+ {"id":"ask_biweekly_commitment_discount","name":"Ask biweekly commitment discount","category":"commitment_leverage","selectionSignals":["every two weeks","biweekly service"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"Can you reduce the visit price for {{frequency}} service?"},
+ {"id":"ask_monthly_commitment_discount","name":"Ask monthly commitment discount","category":"commitment_leverage","selectionSignals":["monthly service","once a month"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"What monthly commitment discount is available?"},
+ {"id":"ask_prepay_discount","name":"Ask prepay discount","category":"commitment_leverage","selectionSignals":["prepay","pay upfront"],"preconditions":{},"moveTemplate":"Can you offer a discount for prepayment?"},
+ {"id":"ask_referral_discount","name":"Ask referral discount","category":"commitment_leverage","selectionSignals":["referral","recommend you"],"preconditions":{},"moveTemplate":"Can you offer a referral discount?"},
+ {"id":"ask_review_discount","name":"Ask review discount","category":"commitment_leverage","selectionSignals":["leave a review","review discount"],"preconditions":{},"moveTemplate":"Can you reduce the total for a confirmed review?"},
+ {"id":"ask_bundle_addon_discount","name":"Ask bundle addon discount","category":"commitment_leverage","selectionSignals":["inside oven","inside fridge"],"preconditions":{},"moveTemplate":"Can you discount the add-ons when bundled?"},
+ {"id":"negotiate_long_term_rate","name":"Negotiate long term rate","category":"commitment_leverage","selectionSignals":["long term","ongoing client"],"preconditions":{"requiresRecurringJob":true},"moveTemplate":"Can you offer a long-term client rate?"},
+ {"id":"ask_multi_property_discount","name":"Ask multi property discount","category":"commitment_leverage","selectionSignals":["second property","multiple homes"],"preconditions":{},"moveTemplate":"Can you offer a discount for multiple properties?"}
+]
