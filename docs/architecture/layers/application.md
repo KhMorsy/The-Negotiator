@@ -54,6 +54,9 @@ PR-B5 adds `src/app/report/reportComposer.ts` and its composed report API at
 T1 uses the shared composition root for the intake, confirmation, negotiation,
 audit, and report routes so the simulated flow shares one in-memory state.
 
+PR-A6 makes `createContainer.ts` select the fake `SpeechAgent` by default and
+the ElevenLabs adapter only when the explicit env flag and credentials are set.
+
 ## Testing rules
 
 - Integration tests construct a container with **fake adapters** (`src/adapters/fake/**`).

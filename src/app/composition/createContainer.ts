@@ -2,10 +2,12 @@ import { createFakeDocumentParser } from "@/adapters/fake/fakeDocumentParser";
 import { createFakeSpeechAgent } from "@/adapters/fake/fakeSpeechAgent";
 import { createFakeVendorDirectory } from "@/adapters/fake/fakeVendorDirectory";
 import { createSimulatedCallAdapter } from "@/adapters/fake/simulatedTelephony";
+import { createElevenLabsAgentAdapter } from "@/adapters/speech/elevenLabsAgent";
 import { CallOrchestrator } from "@/app/calls/callOrchestrator";
 import { DocumentParserService } from "@/app/intake/documentParserService";
 import { IntakeOrchestrator } from "@/app/intake/intakeOrchestrator";
 import { ReportComposer } from "@/app/report/reportComposer";
+import type { SpeechAgent } from "@/contracts";
 import { createTestContainer, type AppContainer } from "./createTestContainer";
 
 export interface Container extends AppContainer {
@@ -13,6 +15,7 @@ export interface Container extends AppContainer {
   intakeOrchestrator: IntakeOrchestrator;
   callOrchestrator: CallOrchestrator;
   reportComposer: ReportComposer;
+  speechAgentKind: "fake" | "elevenlabs";
   listAuditByJobSpec(jobSpecId: string): ReturnType<Container["repos"]["audit"]["listByCall"]>;
 }
 
@@ -23,8 +26,9 @@ function buildContainer(): Container {
   const app = createTestContainer();
   const telephony = createSimulatedCallAdapter();
   const vendorDirectory = createFakeVendorDirectory();
+  const speech = selectSpeechAgent();
   const intakeOrchestrator = new IntakeOrchestrator({
-    speechAgent: createFakeSpeechAgent(),
+    speechAgent: speech.agent,
     jobSpecRepo: app.repos.jobSpecs,
     documentParserService: new DocumentParserService(createFakeDocumentParser()),
   });
@@ -58,6 +62,7 @@ function buildContainer(): Container {
     intakeOrchestrator,
     callOrchestrator,
     reportComposer,
+    speechAgentKind: speech.kind,
     async listAuditByJobSpec(jobSpecId) {
       const calls = await app.repos.calls.listByJobSpec(jobSpecId);
       const eventGroups = await Promise.all(
@@ -66,6 +71,22 @@ function buildContainer(): Container {
       return eventGroups.flat();
     },
   };
+}
+
+function selectSpeechAgent(): {
+  agent: SpeechAgent;
+  kind: "fake" | "elevenlabs";
+} {
+  const useSimulated =
+    process.env.USE_SIMULATED_SPEECH !== "false" ||
+    !process.env.ELEVENLABS_API_KEY ||
+    !process.env.ELEVENLABS_AGENT_ID;
+
+  if (useSimulated) {
+    return { agent: createFakeSpeechAgent(), kind: "fake" };
+  }
+
+  return { agent: createElevenLabsAgentAdapter(), kind: "elevenlabs" };
 }
 
 export function createContainer(): Container {

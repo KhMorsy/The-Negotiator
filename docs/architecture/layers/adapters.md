@@ -32,6 +32,10 @@ Implements port interfaces against concrete vendors (or fakes for CI/demo). **Th
 PR-B2 adds deterministic fake speech and document-parser adapters for the
 simulated intake flow: `fakeSpeechAgent.ts` and `fakeDocumentParser.ts`.
 
+PR-A6 adds `ElevenLabsAgentAdapter` behind `SpeechAgent`; the composition root
+selects it only when `USE_SIMULATED_SPEECH=false` and both ElevenLabs
+credentials are present. The fake remains the default for CI and local demos.
+
 ## Repository adapters
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
