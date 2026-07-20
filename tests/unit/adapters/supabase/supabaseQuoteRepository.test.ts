@@ -1,35 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { createSupabaseQuoteRepository } from "@/adapters/persistence/supabase/supabaseQuoteRepository";
-import type { SupabaseClient } from "@/adapters/persistence/supabase/types";
+import { createInsertSelectMock } from "./mockSupabaseClient";
 
 describe("createSupabaseQuoteRepository", () => {
   it("inserts quote + fee rows using snake_case columns", async () => {
     const inserts: Array<{ table: string; row: Record<string, unknown> }> = [];
     let feeCount = 0;
 
-    const client: SupabaseClient = {
-      from(table) {
-        return {
-          async insert(row) {
-            inserts.push({ table, row });
-            if (table === "quotes") {
-              return { data: { id: "q_1", ...row }, error: null };
-            }
-            if (table === "quote_fees") {
-              feeCount += 1;
-              return { data: { id: `f_${feeCount}`, ...row }, error: null };
-            }
-            throw new Error(`unexpected table: ${table}`);
-          },
-          select() {
-            throw new Error("not needed");
-          },
-          update() {
-            throw new Error("not needed");
-          },
-        };
+    const client = createInsertSelectMock({
+      onInsert(table, row) {
+        inserts.push({ table, row });
+        if (table === "quotes") {
+          return { id: "q_1", ...row };
+        }
+        if (table === "quote_fees") {
+          feeCount += 1;
+          return { id: `f_${feeCount}`, ...row };
+        }
+        throw new Error(`unexpected table: ${table}`);
       },
-    };
+    });
 
     const repo = createSupabaseQuoteRepository(client);
     const quote = await repo.create({
@@ -79,4 +69,3 @@ describe("createSupabaseQuoteRepository", () => {
     expect(quote.fees[0].id).toBe("f_1");
   });
 });
-

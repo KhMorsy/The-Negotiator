@@ -1,6 +1,6 @@
 import type { Quote, QuoteFee, QuoteRepository } from "@/contracts";
-import type { SupabaseClient } from "./types";
-import { mapQuoteRow } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { isNoRowsError, mapQuoteRow, throwOnError } from "./types";
 
 function mapQuoteFeeRow(row: Record<string, unknown>): QuoteFee {
   return {
@@ -27,27 +27,27 @@ export function createSupabaseQuoteRepository(
           pricing_model: input.pricingModel,
           red_flag: input.redFlag,
           round: input.round,
-        });
+        })
+        .select("*")
+        .single();
 
-      if (quoteError) {
-        throw new Error(quoteError.message);
-      }
-
+      throwOnError(quoteError);
       const quoteRow = quoteData as Record<string, unknown>;
       const quoteId = String(quoteRow.id);
 
       const fees: QuoteFee[] = [];
       for (const fee of input.fees) {
-        const { data, error } = await client.from("quote_fees").insert({
-          quote_id: quoteId,
-          fee_type: fee.feeType,
-          amount: fee.amount,
-        });
+        const { data, error } = await client
+          .from("quote_fees")
+          .insert({
+            quote_id: quoteId,
+            fee_type: fee.feeType,
+            amount: fee.amount,
+          })
+          .select("*")
+          .single();
 
-        if (error) {
-          throw new Error(error.message);
-        }
-
+        throwOnError(error);
         fees.push(mapQuoteFeeRow(data as Record<string, unknown>));
       }
 
@@ -61,10 +61,7 @@ export function createSupabaseQuoteRepository(
         .eq("job_spec_id", jobSpecId)
         .order("created_at", { ascending: true });
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
+      throwOnError(error);
       if (!data) {
         return [];
       }
@@ -79,10 +76,7 @@ export function createSupabaseQuoteRepository(
           .eq("quote_id", quoteId)
           .order("id", { ascending: true });
 
-        if (feeError) {
-          throw new Error(feeError.message);
-        }
-
+        throwOnError(feeError);
         const fees = feeData
           ? (feeData as Array<Record<string, unknown>>).map(mapQuoteFeeRow)
           : [];
@@ -99,10 +93,10 @@ export function createSupabaseQuoteRepository(
         .eq("id", id)
         .single();
 
-      if (quoteError) {
-        throw new Error(quoteError.message);
+      if (isNoRowsError(quoteError)) {
+        return null;
       }
-
+      throwOnError(quoteError);
       if (!quoteData) {
         return null;
       }
@@ -113,10 +107,7 @@ export function createSupabaseQuoteRepository(
         .eq("quote_id", id)
         .order("id", { ascending: true });
 
-      if (feeError) {
-        throw new Error(feeError.message);
-      }
-
+      throwOnError(feeError);
       const fees = feeData
         ? (feeData as Array<Record<string, unknown>>).map(mapQuoteFeeRow)
         : [];
@@ -124,4 +115,3 @@ export function createSupabaseQuoteRepository(
     },
   };
 }
-

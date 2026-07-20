@@ -1,36 +1,23 @@
 import { describe, expect, it } from "vitest";
 import { createSupabaseAuditRepository } from "@/adapters/persistence/supabase/supabaseAuditRepository";
-import type { SupabaseClient } from "@/adapters/persistence/supabase/types";
+import { createInsertSelectMock } from "./mockSupabaseClient";
 
 describe("createSupabaseAuditRepository", () => {
   it("maps append input to snake_case columns", async () => {
     let insertedTable: string | null = null;
     let insertedRow: Record<string, unknown> | null = null;
 
-    const client: SupabaseClient = {
-      from(table) {
+    const client = createInsertSelectMock({
+      onInsert(table, row) {
+        insertedTable = table;
+        insertedRow = row;
         return {
-          async insert(row) {
-            insertedTable = table;
-            insertedRow = row;
-            return {
-              data: {
-                id: "a_1",
-                created_at: "2026-01-01T00:00:00.000Z",
-                ...row,
-              },
-              error: null,
-            };
-          },
-          select() {
-            throw new Error("not needed");
-          },
-          update() {
-            throw new Error("not needed");
-          },
+          id: "a_1",
+          created_at: "2026-01-01T00:00:00.000Z",
+          ...row,
         };
       },
-    };
+    });
 
     const repo = createSupabaseAuditRepository(client);
     const created = await repo.append({
@@ -59,4 +46,3 @@ describe("createSupabaseAuditRepository", () => {
     });
   });
 });
-

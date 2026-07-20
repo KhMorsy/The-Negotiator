@@ -1,32 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { createSupabaseJobSpecRepository } from "@/adapters/persistence/supabase/supabaseJobSpecRepository";
-import type { SupabaseClient } from "@/adapters/persistence/supabase/types";
+import { createInsertSelectMock } from "./mockSupabaseClient";
 
 describe("createSupabaseJobSpecRepository", () => {
   it("maps draft fields to snake_case columns", async () => {
     let insertedTable: string | null = null;
     let insertedRow: Record<string, unknown> | null = null;
 
-    const client: SupabaseClient = {
-      from(table) {
-        return {
-          async insert(row) {
-            insertedTable = table;
-            insertedRow = row;
-            return {
-              data: { id: "js_1", ...row },
-              error: null,
-            };
-          },
-          select() {
-            throw new Error("not needed");
-          },
-          update() {
-            throw new Error("not needed");
-          },
-        };
+    const client = createInsertSelectMock({
+      onInsert(table, row) {
+        insertedTable = table;
+        insertedRow = row;
+        return { id: "js_1", ...row };
       },
-    };
+    });
 
     const repo = createSupabaseJobSpecRepository(client);
     const created = await repo.create({
@@ -63,4 +50,3 @@ describe("createSupabaseJobSpecRepository", () => {
     });
   });
 });
-

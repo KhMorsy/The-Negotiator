@@ -1,32 +1,33 @@
 import type { JobSpecRepository } from "@/contracts";
-import type { SupabaseClient } from "./types";
-import { mapJobSpecRow } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { isNoRowsError, mapJobSpecRow, throwOnError } from "./types";
 
 export function createSupabaseJobSpecRepository(
   client: SupabaseClient,
 ): JobSpecRepository {
   return {
     async create(draft) {
-      const { data, error } = await client.from("job_specs").insert({
-        job_type: draft.jobType,
-        sqft: draft.sqft,
-        bedrooms: draft.bedrooms,
-        bathrooms: draft.bathrooms,
-        frequency: draft.frequency,
-        add_ons: draft.addOns,
-        supplies_provided: draft.suppliesProvided,
-        pets: draft.pets,
-        access_notes: draft.accessNotes,
-        condition_notes: draft.conditionNotes,
-        geo: draft.geo,
-        confirmed: false,
-        leverage_quote_amount: draft.leverageQuoteAmount ?? null,
-      });
+      const { data, error } = await client
+        .from("job_specs")
+        .insert({
+          job_type: draft.jobType,
+          sqft: draft.sqft,
+          bedrooms: draft.bedrooms,
+          bathrooms: draft.bathrooms,
+          frequency: draft.frequency,
+          add_ons: draft.addOns,
+          supplies_provided: draft.suppliesProvided,
+          pets: draft.pets,
+          access_notes: draft.accessNotes,
+          condition_notes: draft.conditionNotes,
+          geo: draft.geo,
+          confirmed: false,
+          leverage_quote_amount: draft.leverageQuoteAmount ?? null,
+        })
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
+      throwOnError(error);
       return mapJobSpecRow(data as Record<string, unknown>);
     },
 
@@ -37,14 +38,13 @@ export function createSupabaseJobSpecRepository(
         .eq("id", id)
         .single();
 
-      if (error) {
-        throw new Error(error.message);
+      if (isNoRowsError(error)) {
+        return null;
       }
-
+      throwOnError(error);
       if (!data) {
         return null;
       }
-
       return mapJobSpecRow(data as Record<string, unknown>);
     },
 
@@ -52,16 +52,14 @@ export function createSupabaseJobSpecRepository(
       const { data, error } = await client
         .from("job_specs")
         .update({ confirmed: true })
-        .eq("id", id);
+        .eq("id", id)
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data) {
+      if (isNoRowsError(error) || !data) {
         throw new Error(`JobSpec not found: ${id}`);
       }
-
+      throwOnError(error);
       return mapJobSpecRow(data as Record<string, unknown>);
     },
 
@@ -87,16 +85,14 @@ export function createSupabaseJobSpecRepository(
       const { data, error } = await client
         .from("job_specs")
         .update(update)
-        .eq("id", id);
+        .eq("id", id)
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data) {
+      if (isNoRowsError(error) || !data) {
         throw new Error(`JobSpec not found: ${id}`);
       }
-
+      throwOnError(error);
       return mapJobSpecRow(data as Record<string, unknown>);
     },
   };

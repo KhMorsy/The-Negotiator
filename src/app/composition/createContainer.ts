@@ -27,6 +27,7 @@ import type {
   VendorDirectory,
 } from "@/contracts";
 import { createTestContainer, type AppContainer } from "./createTestContainer";
+import { selectRepos, type PersistenceKind } from "./selectRepos";
 
 export interface Container extends AppContainer {
   telephony: TelephonyProvider;
@@ -36,6 +37,7 @@ export interface Container extends AppContainer {
   speechAgentKind: "fake" | "elevenlabs";
   telephonyKind: "simulated" | "twilio";
   kbProviderKind: "snippets" | "tavily";
+  persistenceKind: PersistenceKind;
   skillRepo: SkillRepository;
   listAuditByJobSpec(jobSpecId: string): ReturnType<Container["repos"]["audit"]["listByCall"]>;
 }
@@ -45,6 +47,8 @@ const globalStore = globalThis as { __negotiatorContainer?: Container };
 
 function buildContainer(): Container {
   const app = createTestContainer();
+  const persistence = selectRepos();
+  const repos = persistence.repos;
   const vendorDirectory = createFakeVendorDirectory();
   const telephony = selectTelephonyProvider(vendorDirectory);
   const speech = selectSpeechAgent();
@@ -53,31 +57,31 @@ function buildContainer(): Container {
     process.env.SKILL_GENERATED_DIR ?? "config/skills/generated",
   );
   const getAuditEvents = async (jobSpecId: string) => {
-    const calls = await app.repos.calls.listByJobSpec(jobSpecId);
+    const calls = await repos.calls.listByJobSpec(jobSpecId);
     const eventGroups = await Promise.all(
-      calls.map((call) => app.repos.audit.listByCall(call.id)),
+      calls.map((call) => repos.audit.listByCall(call.id)),
     );
     return eventGroups.flat();
   };
   const intakeOrchestrator = new IntakeOrchestrator({
     speechAgent: speech.agent,
-    jobSpecRepo: app.repos.jobSpecs,
+    jobSpecRepo: repos.jobSpecs,
     documentParserService: new DocumentParserService(selectDocumentParser()),
   });
   const callOrchestrator = new CallOrchestrator({
-    jobSpecRepo: app.repos.jobSpecs,
-    quoteRepo: app.repos.quotes,
-    auditRepo: app.repos.audit,
-    callRepo: app.repos.calls,
+    jobSpecRepo: repos.jobSpecs,
+    quoteRepo: repos.quotes,
+    auditRepo: repos.audit,
+    callRepo: repos.calls,
     telephony: telephony.provider,
     vendorDirectory,
   });
   const reportComposer = new ReportComposer({
-    quoteRepo: app.repos.quotes,
+    quoteRepo: repos.quotes,
     getAuditEvents,
-    getJobSpec: (id) => app.repos.jobSpecs.getById(id),
+    getJobSpec: (id) => repos.jobSpecs.getById(id),
     getVendors: async (jobSpecId) => {
-      const jobSpec = await app.repos.jobSpecs.getById(jobSpecId);
+      const jobSpec = await repos.jobSpecs.getById(jobSpecId);
       if (!jobSpec) {
         return [];
       }
@@ -91,6 +95,7 @@ function buildContainer(): Container {
 
   return {
     ...app,
+    repos,
     kb: kb.kb,
     telephony: telephony.provider,
     intakeOrchestrator,
@@ -99,6 +104,7 @@ function buildContainer(): Container {
     speechAgentKind: speech.kind,
     telephonyKind: telephony.kind,
     kbProviderKind: kb.kind,
+    persistenceKind: persistence.kind,
     skillRepo,
     listAuditByJobSpec: getAuditEvents,
   };

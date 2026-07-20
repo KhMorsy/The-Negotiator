@@ -58,8 +58,10 @@ snippets on empty responses or search errors.
 
 - Fake unified factory: `src/adapters/fake/inMemoryRepos.ts`
 - Fake per-port repos: `src/adapters/fake/inMemory{JobSpec,Call,Quote,Audit}Repository.ts`
-- Supabase-shaped repos: `src/adapters/persistence/supabase/*.ts`
-- Supabase schema doc: `supabase/migrations/001_init.sql`
+- Supabase repos: `src/adapters/persistence/supabase/*.ts` (real `@supabase/supabase-js` chains)
+- Composition: `src/app/composition/selectRepos.ts` — uses Supabase when `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` are set; otherwise in-memory
+- Schema: `supabase/migrations/001_init.sql`, demo RLS/seed/Realtime: `003_demo_open.sql`
+- Setup runbook: [docs/demo/supabase-setup.md](../../demo/supabase-setup.md)
 - Call repositories persist call outcomes and optional recording URLs.
 
 ## Knowledge-base adapters

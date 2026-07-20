@@ -21,8 +21,9 @@ CREATE TABLE job_specs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Vendor ids are TEXT so demo / directory ids (e.g. vendor-tough) match FKs.
 CREATE TABLE vendors (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
   rating NUMERIC NOT NULL,
@@ -35,7 +36,7 @@ CREATE TABLE vendors (
 CREATE TABLE calls (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   job_spec_id UUID NOT NULL REFERENCES job_specs(id) ON DELETE CASCADE,
-  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  vendor_id TEXT NOT NULL REFERENCES vendors(id),
   round SMALLINT NOT NULL CHECK (round IN (1, 2)),
   outcome TEXT,
   recording_url TEXT,
@@ -46,7 +47,7 @@ CREATE TABLE quotes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   call_id UUID NOT NULL REFERENCES calls(id) ON DELETE CASCADE,
   job_spec_id UUID NOT NULL REFERENCES job_specs(id) ON DELETE CASCADE,
-  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  vendor_id TEXT NOT NULL REFERENCES vendors(id),
   base_price NUMERIC NOT NULL,
   normalized_total NUMERIC NOT NULL,
   pricing_model TEXT NOT NULL,

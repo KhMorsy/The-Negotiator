@@ -1,22 +1,25 @@
 import type { CallRepository } from "@/contracts";
-import type { SupabaseClient } from "./types";
-import { mapCallRow } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { isNoRowsError, mapCallRow, throwOnError } from "./types";
 
-export function createSupabaseCallRepository(client: SupabaseClient): CallRepository {
+export function createSupabaseCallRepository(
+  client: SupabaseClient,
+): CallRepository {
   return {
     async create(input) {
-      const { data, error } = await client.from("calls").insert({
-        job_spec_id: input.jobSpecId,
-        vendor_id: input.vendorId,
-        round: input.round,
-        outcome: null,
-        recording_url: null,
-      });
+      const { data, error } = await client
+        .from("calls")
+        .insert({
+          job_spec_id: input.jobSpecId,
+          vendor_id: input.vendorId,
+          round: input.round,
+          outcome: null,
+          recording_url: null,
+        })
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
+      throwOnError(error);
       return mapCallRow(data as Record<string, unknown>);
     },
 
@@ -27,14 +30,13 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
         .eq("id", id)
         .single();
 
-      if (error) {
-        throw new Error(error.message);
+      if (isNoRowsError(error)) {
+        return null;
       }
-
+      throwOnError(error);
       if (!data) {
         return null;
       }
-
       return mapCallRow(data as Record<string, unknown>);
     },
 
@@ -42,16 +44,14 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
       const { data, error } = await client
         .from("calls")
         .update({ outcome })
-        .eq("id", callId);
+        .eq("id", callId)
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data) {
+      if (isNoRowsError(error) || !data) {
         throw new Error(`Call not found: ${callId}`);
       }
-
+      throwOnError(error);
       return mapCallRow(data as Record<string, unknown>);
     },
 
@@ -59,16 +59,14 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
       const { data, error } = await client
         .from("calls")
         .update({ recording_url: recordingUrl })
-        .eq("id", callId);
+        .eq("id", callId)
+        .select("*")
+        .single();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data) {
+      if (isNoRowsError(error) || !data) {
         throw new Error(`Call not found: ${callId}`);
       }
-
+      throwOnError(error);
       return mapCallRow(data as Record<string, unknown>);
     },
 
@@ -79,14 +77,10 @@ export function createSupabaseCallRepository(client: SupabaseClient): CallReposi
         .eq("job_spec_id", jobSpecId)
         .order("created_at", { ascending: true });
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
+      throwOnError(error);
       if (!data) {
         return [];
       }
-
       return (data as Array<Record<string, unknown>>).map(mapCallRow);
     },
   };

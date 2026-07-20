@@ -1,30 +1,5 @@
 import type { AuditEvent, Call, JobSpec, Quote, QuoteFee } from "@/contracts";
 
-export interface SupabaseClient {
-  from(table: string): {
-    insert(
-      row: Record<string, unknown>,
-    ): PromiseLike<{ data: unknown; error: Error | null }>;
-    select(
-      cols?: string,
-    ): {
-      eq(
-        col: string,
-        val: unknown,
-      ): {
-        single(): PromiseLike<{ data: unknown; error: Error | null }>;
-        order(
-          col: string,
-          opts: { ascending: boolean },
-        ): PromiseLike<{ data: unknown; error: Error | null }>;
-      };
-    };
-    update(
-      row: Record<string, unknown>,
-    ): { eq(col: string, val: unknown): PromiseLike<{ data: unknown; error: Error | null }> };
-  };
-}
-
 export function mapJobSpecRow(row: Record<string, unknown>): JobSpec {
   return {
     id: String(row.id),
@@ -85,3 +60,16 @@ export function mapAuditRow(row: Record<string, unknown>): AuditEvent {
   };
 }
 
+/** PostgREST / Supabase: .single() when zero rows. */
+export function isNoRowsError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false;
+  if (error.code === "PGRST116") return true;
+  const message = error.message ?? "";
+  return message.includes("0 rows") || message.includes("Multiple rows");
+}
+
+export function throwOnError(error: { message: string } | null): void {
+  if (error) {
+    throw new Error(error.message);
+  }
+}

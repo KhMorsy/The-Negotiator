@@ -28,6 +28,8 @@ npm run dev
 
 Specs: [feature](docs/specs/2026-07-18-the-negotiator-feature-spec.md) · [architecture](docs/specs/2026-07-18-the-negotiator-architecture.md) · [mermaid](docs/architecture/the-negotiator-architecture.mmd)
 
+**Live DB:** [docs/demo/supabase-setup.md](docs/demo/supabase-setup.md) — optional; without keys the app uses in-memory repos.
+
 Implementation plans: `docs/superpowers/plans/`
 
 ## Collaboration (two machines / two accounts)
